@@ -1,7 +1,7 @@
 import Head from "next/head"
 import { Box, Heading, Container, Text, Button, Stack } from "@chakra-ui/react"
 
-export default function CallToActionWithAnnotation() {
+export default function Hero() {
 	return (
 		<Container maxW={"3xl"}>
 			<Stack
