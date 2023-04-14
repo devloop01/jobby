@@ -1,9 +1,13 @@
 import { type GetServerSidePropsContext } from "next"
 import { getServerSession, type NextAuthOptions, type DefaultSession } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
+import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { env } from "@/env.mjs"
 import { prisma } from "@/server/db"
+import { logInSchema } from "@/utils/schema/auth"
+import { verify } from "argon2"
+import { type User } from "@prisma/client"
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -32,22 +36,89 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
-	callbacks: {
-		session: ({ session, user }) => ({
-			...session,
-			user: {
-				...session.user,
-				id: user.id,
-			},
-		}),
-	},
 	adapter: PrismaAdapter(prisma),
 	providers: [
+		CredentialsProvider({
+			name: "credentials",
+			credentials: {
+				email: {
+					label: "Email",
+					type: "text",
+					placeholder: "johndoe@test.com",
+				},
+				password: {
+					label: "Password",
+					type: "password",
+					placeholder: "password",
+				},
+			},
+			authorize: async (credentials) => {
+				try {
+					const { email, password } = await logInSchema.parseAsync(credentials)
+
+					const user = await prisma.user.findFirst({
+						where: { email },
+					})
+
+					if (!user) return null
+
+					if (!user.passwordEnabled || !user.password) return null
+
+					const isValidPassword = await verify(user.password, password)
+
+					if (!isValidPassword) {
+						return null
+					}
+
+					return {
+						id: user.id,
+						email: user.email,
+						name: user.name,
+						firstName: user.firstName,
+						lastName: user.lastName,
+					}
+				} catch (error) {
+					return null
+				}
+			},
+		}),
+
 		GoogleProvider({
 			clientId: env.GOOGLE_CLIENT_ID,
 			clientSecret: env.GOOGLE_CLIENT_SECRET,
 		}),
 	],
+
+	session: {
+		strategy: "jwt",
+	},
+	jwt: {
+		maxAge: 60 * 60 * 24 * 30,
+	},
+	callbacks: {
+		jwt: ({ token, user }) => {
+			if (user) {
+				token.id = user.id
+				token.email = user.email
+				// token.firstName = user.firstName
+				// token.lastName = user.lastName
+			}
+			return token
+		},
+		session: ({ session, token }) => {
+			if (session.user) {
+				session.user.id = token.id as User["id"]
+				// session.user.firstName = token.firstName
+				// session.user.lastName = token.lastName
+				// session.user.role = user.role; <-- put other properties on the session here
+			}
+			return session
+		},
+	},
+	pages: {
+		signIn: "/sign-in",
+		newUser: "/sign-up",
+	},
 }
 
 /**

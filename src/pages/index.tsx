@@ -5,7 +5,8 @@ import { signIn, signOut, useSession } from "next-auth/react"
 
 import { api } from "@/utils/api"
 import RootLayout from "@/layouts/root-layout"
-import { Box, Button, Text } from "@chakra-ui/react"
+import { Box, Button, Heading, Text } from "@chakra-ui/react"
+import CallToActionWithIllustration from "@/components/hero/call-to-action"
 
 const Home: NextPage = () => {
 	const { data: sessionData } = useSession()
@@ -18,10 +19,8 @@ const Home: NextPage = () => {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<RootLayout>
-				<Box>
-					<Button onClick={sessionData ? () => void signOut() : () => void signIn()}>
-						{sessionData ? "Sign out" : "Sign in"}
-					</Button>
+				<Box py={8}>
+					<CallToActionWithIllustration />
 				</Box>
 			</RootLayout>
 		</>

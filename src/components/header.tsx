@@ -13,10 +13,20 @@ import {
 	PopoverContent,
 	useBreakpointValue,
 	useDisclosure,
+	Menu,
+	MenuButton,
+	MenuItem,
+	MenuList,
+	MenuGroup,
+	MenuDivider,
+	Avatar,
+	Portal,
 } from "@chakra-ui/react"
 import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons"
 import { signOut, useSession } from "next-auth/react"
 import NextLink from "next/link"
+import { IconUser } from "@tabler/icons-react"
+import { IconLogout } from "@tabler/icons-react"
 
 export function Header() {
 	const { isOpen, onToggle } = useDisclosure()
@@ -30,13 +40,13 @@ export function Header() {
 				color={"gray.600"}
 				minH={"100px"}
 				py={{ base: 2 }}
-				px={{ base: 12 }}
+				px={{ base: 6, md: 12 }}
 				borderBottom={1}
 				borderStyle={"solid"}
 				borderColor={"gray.200"}
 				align={"center"}
 			>
-				<Flex flex={{ base: 1, md: "auto" }} ml={{ base: -2 }} display={{ base: "flex", md: "none" }}>
+				<Flex ml={{ base: -2 }} display={{ base: "flex", md: "none" }}>
 					<IconButton
 						onClick={onToggle}
 						icon={isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />}
@@ -48,11 +58,12 @@ export function Header() {
 					<NextLink href={"/"}>
 						<Text
 							textAlign={useBreakpointValue({ base: "center", md: "left" })}
-							fontFamily={"sans-serif"}
+							fontFamily={"Work Sans"}
+							fontWeight={"bold"}
 							color={"gray.800"}
 							fontSize={"3xl"}
 						>
-							Logo
+							Jobby.
 						</Text>
 					</NextLink>
 
@@ -62,22 +73,52 @@ export function Header() {
 				</Flex>
 
 				{sessionData ? (
-					<Button onClick={() => void signOut()}>Sign out</Button>
+					<Menu isLazy autoSelect={false}>
+						<MenuButton aria-label="Options">
+							<Avatar size={"sm"} name={sessionData.user.name ?? undefined} />
+						</MenuButton>
+						<Portal>
+							<MenuList>
+								<Box px={4} py={2}>
+									<Text>{sessionData.user.name ?? ""}</Text>
+									<Text fontSize={"sm"} color={"gray.500"}>
+										{sessionData.user.email ?? ""}
+									</Text>
+								</Box>
+								<MenuDivider />
+								<MenuGroup>
+									<MenuItem as={NextLink} href="/profile" fontSize={15} icon={<IconUser size={16} />}>
+										Profile
+									</MenuItem>
+								</MenuGroup>
+								<MenuDivider />
+								<MenuGroup>
+									<MenuItem
+										fontSize={15}
+										icon={<IconLogout size={16} />}
+										onClick={() => void signOut()}
+									>
+										Logout
+									</MenuItem>
+								</MenuGroup>
+							</MenuList>
+						</Portal>
+					</Menu>
 				) : (
-					<Stack flex={{ base: 1, md: 0 }} justify={"flex-end"} direction={"row"} spacing={6}>
+					<Stack justify={"flex-end"} direction={"row"} spacing={6}>
 						<Button as={NextLink} fontSize={"sm"} fontWeight={400} variant={"link"} href={"/sign-in"}>
 							Sign In
 						</Button>
 						<Button
 							as={NextLink}
+							href={"/sign-up"}
 							display={{ base: "none", md: "inline-flex" }}
 							fontSize={"sm"}
 							fontWeight={600}
 							color={"white"}
-							bg={"pink.400"}
-							href={"/sign-up"}
+							bg={"orange.400"}
 							_hover={{
-								bg: "pink.300",
+								bg: "orange.300",
 							}}
 						>
 							Sign Up

@@ -1,17 +1,13 @@
-import NextLink from "next/link"
 import {
 	Box,
 	FormControl,
 	FormLabel,
 	Input,
 	InputGroup,
-	HStack,
 	InputRightElement,
 	Stack,
 	Button,
 	Text,
-	useColorModeValue,
-	Link,
 	FormErrorMessage,
 	Popover,
 	PopoverArrow,
@@ -29,6 +25,11 @@ import {
 	Divider,
 	Flex,
 	useBreakpointValue,
+	Alert,
+	AlertDescription,
+	AlertIcon,
+	AlertTitle,
+	useToast,
 } from "@chakra-ui/react"
 import { useRef, useState } from "react"
 import { IconEye, IconEyeOff, IconCircleCheckFilled, IconCircleXFilled } from "@tabler/icons-react"
@@ -36,6 +37,10 @@ import { z } from "zod"
 import { type SubmitHandler, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconGoogle } from "@/components/icons"
+
+import { type SignUpSchema, signUpSchema } from "@/utils/schema/auth"
+import { api } from "@/utils/api"
+import { useRouter } from "next/router"
 
 function checkPassword(password: string) {
 	const uppercase = z.string().regex(new RegExp(".*[A-Z].*"), "One uppercase character")
@@ -65,47 +70,47 @@ function checkPassword(password: string) {
 	}
 }
 
-const formSchema = z
-	.object({
-		firstName: z.string().min(1, "First Name is required"),
-		lastName: z.string().optional(),
-		email: z.string().min(1, "Email is required").email("Invalid email"),
-		password: z
-			.string()
-			.min(1, "Password is required")
-			.regex(new RegExp(".*[A-Z].*"), "One uppercase character")
-			.regex(new RegExp(".*[a-z].*"), "One lowercase character")
-			.regex(new RegExp(".*\\d.*"), "One number")
-			.regex(new RegExp(".*[`~<>?,./!@#$%^&*()\\-_+=\"'|{}\\[\\];:\\\\].*"), "One special character")
-			.min(8, "Must be at least 8 characters in length"),
-		confirmPassword: z.string().min(1, "Password confirmation is required"),
-	})
-	.refine((data) => data.password === data.confirmPassword, {
-		path: ["confirmPassword"],
-		message: "Passwords do not match",
-	})
-
-type FormSchemaType = z.infer<typeof formSchema>
-
 export const SignUpForm = () => {
 	const [showPassword, setShowPassword] = useState(false)
 	const { isOpen, onOpen, onClose } = useDisclosure()
 	const passwordInputRef = useRef<HTMLInputElement | null>(null)
 	const poppverRef = useRef<HTMLElement | null>(null)
 
+	const toast = useToast()
+	const router = useRouter()
+
+	const {
+		mutate: registerUser,
+		isLoading: registeringUser,
+		isError: registerUserIsError,
+		error: registerUserError,
+	} = api.user.register.useMutation({
+		onSuccess: () => {
+			toast({
+				title: "Account created.",
+				description: "Successfully created your account.",
+				status: "success",
+				duration: 5000,
+				isClosable: true,
+			})
+
+			void router.push("/sign-in")
+		},
+	})
+
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isSubmitting },
+		formState: { errors },
 		watch,
-	} = useForm<FormSchemaType>({
-		resolver: zodResolver(formSchema),
+	} = useForm<SignUpSchema>({
+		resolver: zodResolver(signUpSchema),
 	})
 
 	const validatedPassword = checkPassword(watch("password"))
 
-	const onSubmit: SubmitHandler<FormSchemaType> = (data) => {
-		console.log(data)
+	const onSubmit: SubmitHandler<SignUpSchema> = (data) => {
+		registerUser(data)
 	}
 
 	useOutsideClick({
@@ -115,6 +120,13 @@ export const SignUpForm = () => {
 
 	return (
 		<Box rounded={"lg"} bg={"white"} boxShadow={"xl"} border={"1px"} borderColor={"gray.200"} p={8}>
+			{registerUserIsError && (
+				<Alert status="error" mb={"6"}>
+					<AlertIcon />
+					<AlertTitle>{registerUserError.message}</AlertTitle>
+				</Alert>
+			)}
+
 			{/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
 			<Stack spacing={4} as="form" onSubmit={handleSubmit(onSubmit)}>
 				<Stack direction={useBreakpointValue({ base: "column", sm: "row" })} align={"start"}>
@@ -275,7 +287,7 @@ export const SignUpForm = () => {
 
 				<Stack spacing={10} pt={2}>
 					<Button
-						loadingText="Submitting"
+						w={"full"}
 						size="lg"
 						bg={"blue.400"}
 						color={"white"}
@@ -283,7 +295,8 @@ export const SignUpForm = () => {
 							bg: "blue.500",
 						}}
 						type="submit"
-						disabled={isSubmitting}
+						isLoading={registeringUser}
+						loadingText=""
 					>
 						Sign up
 					</Button>

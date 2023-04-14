@@ -14,8 +14,8 @@ import {
 	IconButton,
 	Divider,
 	Flex,
+	useToast,
 } from "@chakra-ui/react"
-import { z } from "zod"
 import { type SubmitHandler, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconEye, IconEyeOff } from "@tabler/icons-react"
@@ -23,26 +23,50 @@ import { IconEye, IconEyeOff } from "@tabler/icons-react"
 import { useState } from "react"
 import { IconGoogle } from "../icons"
 
-const formSchema = z.object({
-	email: z.string().min(1, "Email is required").email("Invalid email"),
-	password: z.string().min(1, "Password is required"),
-})
-
-type FormSchemaType = z.infer<typeof formSchema>
+import { type LogInSchema, logInSchema } from "@/utils/schema/auth"
+import { signIn } from "next-auth/react"
+import { useRouter } from "next/router"
 
 export const SignInForm = () => {
 	const [showPassword, setShowPassword] = useState(false)
+	const [islogingIn, setIsLogingIn] = useState(false)
+
+	const toast = useToast()
+	const router = useRouter()
 
 	const {
 		register,
 		handleSubmit,
 		formState: { errors, isSubmitting },
-	} = useForm<FormSchemaType>({
-		resolver: zodResolver(formSchema),
+	} = useForm<LogInSchema>({
+		resolver: zodResolver(logInSchema),
 	})
 
-	const onSubmit: SubmitHandler<FormSchemaType> = (data) => {
-		console.log(data)
+	const onSubmit: SubmitHandler<LogInSchema> = async (data) => {
+		setIsLogingIn(true)
+
+		const result = await signIn("credentials", { ...data, redirect: false })
+
+		if (result && result.ok) {
+			toast({
+				title: "Logged In",
+				status: "success",
+				duration: 5000,
+				isClosable: true,
+			})
+			void router.push("/")
+		}
+
+		if (result && result.error) {
+			toast({
+				title: "Invalid credentials",
+				status: "error",
+				duration: 5000,
+				isClosable: true,
+			})
+		}
+
+		setIsLogingIn(false)
 	}
 
 	return (
@@ -85,7 +109,7 @@ export const SignInForm = () => {
 							bg: "blue.500",
 						}}
 						type="submit"
-						disabled={isSubmitting}
+						isLoading={islogingIn}
 					>
 						Sign in
 					</Button>
