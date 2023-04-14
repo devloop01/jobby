@@ -1,5 +1,30 @@
 import RootLayout from "@/layouts/root-layout"
-import { Heading } from "@chakra-ui/react"
+import {
+	Box,
+	Button,
+	Container,
+	Flex,
+	FormControl,
+	FormLabel,
+	Grid,
+	GridItem,
+	HStack,
+	Heading,
+	IconButton,
+	Input,
+	InputGroup,
+	Text,
+	Textarea,
+	VStack,
+} from "@chakra-ui/react"
+import {
+	IconAt,
+	IconPhone,
+	IconMapPin,
+	IconBrandFacebookFilled,
+	IconBrandGithubFilled,
+	IconBrandDiscordFilled,
+} from "@tabler/icons-react"
 import Head from "next/head"
 
 export default function Contact() {
@@ -10,7 +35,147 @@ export default function Contact() {
 			</Head>
 
 			<RootLayout>
-				<Heading>Contact</Heading>
+				<Container maxW="full" mt={0} centerContent overflow="hidden">
+					<Box
+						bg="#3393e5"
+						color="white"
+						borderRadius="lg"
+						w="full"
+						my={{ sm: 6, md: 16, lg: 24 }}
+						p={{ sm: 5, md: 5, lg: 16 }}
+					>
+						<Box p={4}>
+							<Grid templateColumns={{ lg: "repeat(2, 1fr)" }} gap={{ base: 20, sm: 3, md: 5, lg: 20 }}>
+								<GridItem>
+									<Box>
+										<Heading>Contact us</Heading>
+										<Text mt={2}>Leave your email and we will get back to you within 24 hours</Text>
+										<Box py={{ base: 5, sm: 5, md: 8, lg: 10 }}>
+											<VStack pl={0} spacing={6} alignItems="flex-start">
+												<Box>
+													<Flex align={"center"} gap={3}>
+														<IconPhone size={22} />
+														<Flex direction={"column"}>
+															<Text fontSize={"sm"} fontWeight={300}>
+																Phone
+															</Text>
+															<Text fontSize={"sm"}>+91-988888888</Text>
+														</Flex>
+													</Flex>
+												</Box>
+												<Box>
+													<Flex align={"center"} gap={3}>
+														<IconAt size={22} />
+														<Flex direction={"column"}>
+															<Text fontSize={"sm"} fontWeight={300}>
+																Email
+															</Text>
+															<Text fontSize={"sm"}>jobbcontact@jobby.com</Text>
+														</Flex>
+													</Flex>
+												</Box>
+												<Box>
+													<Flex align={"center"} gap={3}>
+														<IconMapPin size={22} />
+														<Flex direction={"column"}>
+															<Text fontSize={"sm"} fontWeight={300}>
+																Address
+															</Text>
+															<Text fontSize={"sm"}>844 Morris Park avenue</Text>
+														</Flex>
+													</Flex>
+												</Box>
+											</VStack>
+										</Box>
+										<HStack mt={{ lg: 10, md: 10 }} spacing={0} alignItems="flex-start">
+											<IconButton
+												aria-label="facebook"
+												variant="ghost"
+												size="lg"
+												isRound={true}
+												_hover={{ opacity: 0.75 }}
+												icon={<IconBrandFacebookFilled size={22} />}
+											/>
+											<IconButton
+												aria-label="github"
+												variant="ghost"
+												size="lg"
+												isRound={true}
+												_hover={{ opacity: 0.75 }}
+												icon={<IconBrandGithubFilled size={22} />}
+											/>
+											<IconButton
+												aria-label="discord"
+												variant="ghost"
+												size="lg"
+												isRound={true}
+												_hover={{ opacity: 0.75 }}
+												icon={<IconBrandDiscordFilled size={22} />}
+											/>
+										</HStack>
+									</Box>
+								</GridItem>
+
+								<GridItem>
+									<Box bg="white" borderRadius="lg" boxShadow={"xl"}>
+										<Box p={8} color="#0B0E3F">
+											<VStack spacing={5}>
+												<FormControl id="email">
+													<FormLabel>Email</FormLabel>
+													<InputGroup borderColor="#E0E1E7">
+														<Input
+															type="email"
+															placeholder="johndoe@email.com"
+															_placeholder={{
+																color: "gray.400",
+																fontSize: "sm",
+															}}
+															size="md"
+														/>
+													</InputGroup>
+												</FormControl>
+
+												<FormControl id="name">
+													<FormLabel>Name</FormLabel>
+													<InputGroup borderColor="#E0E1E7">
+														<Input
+															type="text"
+															placeholder="John Doe"
+															_placeholder={{
+																color: "gray.400",
+																fontSize: "sm",
+															}}
+															size="md"
+														/>
+													</InputGroup>
+												</FormControl>
+
+												<FormControl id="message">
+													<FormLabel>Message</FormLabel>
+													<Textarea
+														rows={6}
+														placeholder="your message here"
+														_placeholder={{
+															color: "gray.400",
+															fontSize: "sm",
+														}}
+													/>
+												</FormControl>
+												<FormControl>
+													<Flex justify={"end"}>
+														<Button colorScheme={"brand"} fontSize={"sm"}>
+															Send Message
+														</Button>
+													</Flex>
+												</FormControl>
+											</VStack>
+										</Box>
+									</Box>
+								</GridItem>
+							</Grid>
+						</Box>
+					</Box>
+				</Container>
 			</RootLayout>
 		</>
 	)
