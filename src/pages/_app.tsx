@@ -5,8 +5,8 @@ import { SessionProvider } from "next-auth/react"
 import { ChakraProvider } from "@chakra-ui/react"
 import Head from "next/head"
 
-import "@fontsource/work-sans"
-import "@fontsource/inter"
+import "@fontsource/work-sans/latin.css"
+import "@fontsource/inter/latin.css"
 
 import theme from "@/utils/theme"
 import { api } from "@/utils/api"

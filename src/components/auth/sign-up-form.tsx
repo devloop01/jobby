@@ -286,18 +286,7 @@ export const SignUpForm = () => {
 				</FormControl>
 
 				<Stack spacing={10} pt={2}>
-					<Button
-						w={"full"}
-						size="lg"
-						bg={"blue.400"}
-						color={"white"}
-						_hover={{
-							bg: "blue.500",
-						}}
-						type="submit"
-						isLoading={registeringUser}
-						loadingText=""
-					>
+					<Button type="submit" colorScheme={"brand"} w={"full"} size="lg" isLoading={registeringUser}>
 						Sign up
 					</Button>
 				</Stack>
@@ -312,7 +301,7 @@ export const SignUpForm = () => {
 			</Flex>
 
 			<Stack>
-				<Button colorScheme="gray" leftIcon={<IconGoogle />} size="lg" fontSize={"md"}>
+				<Button variant={"outline"} leftIcon={<IconGoogle />} size="lg" fontSize={"md"}>
 					Google
 				</Button>
 			</Stack>

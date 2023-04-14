@@ -106,20 +106,15 @@ export function Header() {
 					</Menu>
 				) : (
 					<Stack justify={"flex-end"} direction={"row"} spacing={6}>
-						<Button as={NextLink} fontSize={"sm"} fontWeight={400} variant={"link"} href={"/sign-in"}>
+						<Button as={NextLink} href={"/sign-in"} variant={"link"} fontSize={"sm"} fontWeight={400}>
 							Sign In
 						</Button>
 						<Button
 							as={NextLink}
 							href={"/sign-up"}
 							display={{ base: "none", md: "inline-flex" }}
+							colorScheme={"brand"}
 							fontSize={"sm"}
-							fontWeight={600}
-							color={"white"}
-							bg={"orange.400"}
-							_hover={{
-								bg: "orange.300",
-							}}
 						>
 							Sign Up
 						</Button>

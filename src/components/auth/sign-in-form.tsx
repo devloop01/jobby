@@ -102,15 +102,7 @@ export const SignInForm = () => {
 							Forgot password?
 						</Link>
 					</Stack>
-					<Button
-						bg={"blue.400"}
-						color={"white"}
-						_hover={{
-							bg: "blue.500",
-						}}
-						type="submit"
-						isLoading={islogingIn}
-					>
+					<Button colorScheme={"brand"} type="submit" isLoading={islogingIn}>
 						Sign in
 					</Button>
 				</Stack>
@@ -125,8 +117,8 @@ export const SignInForm = () => {
 			</Flex>
 
 			<Stack>
-				<Button colorScheme="gray" leftIcon={<IconGoogle />} size="lg" fontSize={"md"}>
-					Google
+				<Button variant={"outline"} leftIcon={<IconGoogle w={6} h={6} />} size="lg" fontSize={"md"}>
+					Continue with Google
 				</Button>
 			</Stack>
 		</Box>
