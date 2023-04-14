@@ -1,3 +1,4 @@
+import { Footer } from "@/components/footer"
 import { Header } from "@/components/header"
 import { Box, Container } from "@chakra-ui/react"
 import type { ReactNode, FC } from "react"
@@ -10,9 +11,10 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => {
 	return (
 		<Box>
 			<Header />
-			<Container maxW="1560px" as={"main"}>
+			<Container as={"main"} maxW="1560px" minH={"calc(100vh - 100px)"}>
 				{children}
 			</Container>
+			<Footer />
 		</Box>
 	)
 }
