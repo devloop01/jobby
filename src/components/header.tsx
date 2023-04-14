@@ -28,6 +28,47 @@ import NextLink from "next/link"
 import { IconUser } from "@tabler/icons-react"
 import { IconLogout } from "@tabler/icons-react"
 
+interface NavItem {
+	label: string
+	subLabel?: string
+	children?: Array<NavItem>
+	href?: string
+}
+
+const NAV_ITEMS: Array<NavItem> = [
+	{
+		label: "About",
+		href: "/about",
+	},
+	{
+		label: "Careers",
+		href: "/careers",
+	},
+	{
+		label: "Contact",
+		href: "/contact",
+	},
+	{
+		label: "Blog",
+		href: "/blog",
+	},
+	// {
+	// 	label: "Careers",
+	// 	children: [
+	// 		{
+	// 			label: "Job Board",
+	// 			subLabel: "Find your dream design job",
+	// 			href: "#",
+	// 		},
+	// 		{
+	// 			label: "Freelance Projects",
+	// 			subLabel: "An exclusive list for contract work",
+	// 			href: "#",
+	// 		},
+	// 	],
+	// },
+]
+
 export function Header() {
 	const { isOpen, onToggle } = useDisclosure()
 
@@ -58,9 +99,8 @@ export function Header() {
 					<NextLink href={"/"}>
 						<Text
 							textAlign={useBreakpointValue({ base: "center", md: "left" })}
-							fontFamily={"Work Sans"}
 							fontWeight={"bold"}
-							color={"gray.800"}
+							color={"brand.500"}
 							fontSize={"3xl"}
 						>
 							Jobby.
@@ -128,6 +168,8 @@ export function Header() {
 		</Box>
 	)
 }
+
+export default Header
 
 const DesktopNav = () => {
 	return (
@@ -254,44 +296,3 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
 		</Stack>
 	)
 }
-
-interface NavItem {
-	label: string
-	subLabel?: string
-	children?: Array<NavItem>
-	href?: string
-}
-
-const NAV_ITEMS: Array<NavItem> = [
-	{
-		label: "About",
-		href: "/about",
-	},
-	{
-		label: "Careers",
-		href: "/careers",
-	},
-	{
-		label: "Contact",
-		href: "/contact",
-	},
-	{
-		label: "Blog",
-		href: "/blog",
-	},
-	// {
-	// 	label: "Careers",
-	// 	children: [
-	// 		{
-	// 			label: "Job Board",
-	// 			subLabel: "Find your dream design job",
-	// 			href: "#",
-	// 		},
-	// 		{
-	// 			label: "Freelance Projects",
-	// 			subLabel: "An exclusive list for contract work",
-	// 			href: "#",
-	// 		},
-	// 	],
-	// },
-]
