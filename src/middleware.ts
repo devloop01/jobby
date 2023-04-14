@@ -1,7 +1,17 @@
 import { withAuth } from "next-auth/middleware"
 
 const publicFileRegex = new RegExp(/\.(.*)$/)
-const anonymousRoutes = ["/", "/sign-in", "/sign-up", "/auth/error", "/auth/verify-request"]
+const publicRoutes = [
+	"/",
+	"/sign-in",
+	"/sign-up",
+	"/auth/error",
+	"/auth/verify-request",
+	"/about",
+	"/contact",
+	"/careers",
+	"/blog",
+]
 
 export default withAuth({
 	callbacks: {
@@ -13,7 +23,7 @@ export default withAuth({
 					pathname.startsWith("/api") ||
 					pathname.startsWith("/static") ||
 					publicFileRegex.test(pathname) ||
-					anonymousRoutes.includes(pathname)
+					publicRoutes.includes(pathname)
 			)
 		},
 	},
