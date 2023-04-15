@@ -1,9 +1,29 @@
+import { type GetServerSidePropsContext } from "next"
 import Head from "next/head"
 import NextLink from "next/link"
 import { Flex, Stack, Heading, Text, Link, useBreakpointValue } from "@chakra-ui/react"
 
+import { getServerAuthSession } from "@/server/auth"
+
 import CleanLayout from "@/layouts/clean-layout"
 import SignUpEmployerForm from "@/components/auth/sign-up-employer-form"
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+	const session = await getServerAuthSession(context)
+
+	if (session) {
+		return {
+			redirect: {
+				destination: "/",
+				permanent: false,
+			},
+		}
+	}
+
+	return {
+		props: {},
+	}
+}
 
 function SignUpEmployer() {
 	return (

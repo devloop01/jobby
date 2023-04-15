@@ -1,8 +1,31 @@
-import SignInForm from "@/components/auth/sign-in-form"
-import CleanLayout from "@/layouts/clean-layout"
-import { Flex, Heading, Link, Stack, Text, useBreakpointValue } from "@chakra-ui/react"
+import { type GetServerSidePropsContext } from "next"
+
 import Head from "next/head"
 import NextLink from "next/link"
+
+import { Flex, Heading, Link, Stack, Text, useBreakpointValue } from "@chakra-ui/react"
+
+import { getServerAuthSession } from "@/server/auth"
+
+import SignInForm from "@/components/auth/sign-in-form"
+import CleanLayout from "@/layouts/clean-layout"
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+	const session = await getServerAuthSession(context)
+
+	if (session) {
+		return {
+			redirect: {
+				destination: "/",
+				permanent: false,
+			},
+		}
+	}
+
+	return {
+		props: {},
+	}
+}
 
 function SignIn() {
 	return (
