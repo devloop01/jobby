@@ -26,6 +26,8 @@ import {
 	AlertIcon,
 	AlertTitle,
 	useToast,
+	Select,
+	Textarea,
 } from "@chakra-ui/react"
 import { useRef, useState } from "react"
 import { IconEye, IconEyeOff, IconCircleCheckFilled, IconCircleXFilled } from "@tabler/icons-react"
@@ -33,7 +35,7 @@ import { z } from "zod"
 import { type SubmitHandler, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { type SignUpSchema, signUpSchema } from "@/utils/schema/auth"
+import { type SignUpEmployerSchema, signUpEmployerSchema } from "@/utils/schema/auth"
 import { api } from "@/utils/api"
 import { useRouter } from "next/router"
 
@@ -75,14 +77,14 @@ export const SignUpForm = () => {
 	const router = useRouter()
 
 	const {
-		mutate: registerUser,
-		isLoading: registeringUser,
-		isError: registerUserIsError,
-		error: registerUserError,
-	} = api.user.register.useMutation({
+		mutate: registerEmployer,
+		isLoading: registeringEmployer,
+		isError: registerEmployerIsError,
+		error: registerEmployerError,
+	} = api.user.registerEmployer.useMutation({
 		onSuccess: () => {
 			toast({
-				title: "Account created.",
+				title: "Employer Account created.",
 				description: "Successfully created your account.",
 				status: "success",
 				duration: 5000,
@@ -98,14 +100,14 @@ export const SignUpForm = () => {
 		handleSubmit,
 		formState: { errors },
 		watch,
-	} = useForm<SignUpSchema>({
-		resolver: zodResolver(signUpSchema),
+	} = useForm<SignUpEmployerSchema>({
+		resolver: zodResolver(signUpEmployerSchema),
 	})
 
 	const validatedPassword = checkPassword(watch("password"))
 
-	const onSubmit: SubmitHandler<SignUpSchema> = (data) => {
-		registerUser(data)
+	const onSubmit: SubmitHandler<SignUpEmployerSchema> = (data) => {
+		registerEmployer(data)
 	}
 
 	useOutsideClick({
@@ -115,10 +117,10 @@ export const SignUpForm = () => {
 
 	return (
 		<Box rounded={"lg"} bg={"white"} boxShadow={"xl"} border={"1px"} borderColor={"gray.200"} p={8}>
-			{registerUserIsError && (
+			{registerEmployerIsError && (
 				<Alert status="error" mb={"6"}>
 					<AlertIcon />
-					<AlertTitle>{registerUserError.message}</AlertTitle>
+					<AlertTitle>{registerEmployerError.message}</AlertTitle>
 				</Alert>
 			)}
 
@@ -126,25 +128,25 @@ export const SignUpForm = () => {
 			<Stack spacing={4} as="form" onSubmit={handleSubmit(onSubmit)}>
 				<Stack direction={useBreakpointValue({ base: "column", sm: "row" })} align={"start"}>
 					<FormControl id="firstName" isInvalid={!!errors.firstName}>
-						<FormLabel>First Name</FormLabel>
+						<FormLabel fontSize={"sm"}>First Name</FormLabel>
 						<Input type="text" {...register("firstName")} />
 						<FormErrorMessage>{errors.firstName && errors.firstName.message}</FormErrorMessage>
 					</FormControl>
 					<FormControl id="lastName" isInvalid={!!errors.lastName}>
-						<FormLabel>Last Name</FormLabel>
+						<FormLabel fontSize={"sm"}>Last Name</FormLabel>
 						<Input type="text" {...register("lastName")} />
 						<FormErrorMessage>{errors.lastName && errors.lastName.message}</FormErrorMessage>
 					</FormControl>
 				</Stack>
 
 				<FormControl id="email" isInvalid={!!errors.email}>
-					<FormLabel>Email address</FormLabel>
+					<FormLabel fontSize={"sm"}>Email address</FormLabel>
 					<Input type="email" {...register("email")} />
 					<FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
 				</FormControl>
 
 				<FormControl id="password" isInvalid={!!errors.password}>
-					<FormLabel>Password</FormLabel>
+					<FormLabel fontSize={"sm"}>Password</FormLabel>
 
 					<InputGroup>
 						<Popover
@@ -265,7 +267,7 @@ export const SignUpForm = () => {
 				</FormControl>
 
 				<FormControl id="confirmPassword" isInvalid={!!errors.confirmPassword}>
-					<FormLabel>Confirm Password</FormLabel>
+					<FormLabel fontSize={"sm"}>Confirm Password</FormLabel>
 					<InputGroup>
 						<Input type={showPassword ? "text" : "password"} {...register("confirmPassword")} />
 						<InputRightElement h={"full"}>
@@ -280,8 +282,63 @@ export const SignUpForm = () => {
 					<FormErrorMessage>{errors.confirmPassword && errors.confirmPassword.message}</FormErrorMessage>
 				</FormControl>
 
+				<Stack direction={useBreakpointValue({ base: "column", sm: "row" })} align={"start"}>
+					<FormControl id="companyName" isInvalid={!!errors.companyName}>
+						<FormLabel fontSize={"sm"}>Company Name</FormLabel>
+						<Input type="text" {...register("companyName")} />
+						<FormErrorMessage>{errors.companyName && errors.companyName.message}</FormErrorMessage>
+					</FormControl>
+					<FormControl id="companyPhone" isInvalid={!!errors.companyPhone}>
+						<FormLabel fontSize={"sm"}>Company Phone</FormLabel>
+						<Input type="text" {...register("companyPhone")} />
+						<FormErrorMessage>{errors.companyPhone && errors.companyPhone.message}</FormErrorMessage>
+					</FormControl>
+				</Stack>
+
+				<FormControl id="companyWebsite" isInvalid={!!errors.companyWebsite}>
+					<FormLabel fontSize={"sm"}>Company Website</FormLabel>
+					<Input type="text" {...register("companyWebsite")} />
+					<FormErrorMessage>{errors.companyWebsite && errors.companyWebsite.message}</FormErrorMessage>
+				</FormControl>
+
+				<Stack direction={useBreakpointValue({ base: "column", sm: "row" })} align={"start"}>
+					<FormControl id="companyFoundedYear" isInvalid={!!errors.companyFoundedYear}>
+						<FormLabel fontSize={"sm"}>Founded what year (optional)</FormLabel>
+						<Input type="text" {...register("companyFoundedYear")} />
+						<FormErrorMessage>
+							{errors.companyFoundedYear && errors.companyFoundedYear.message}
+						</FormErrorMessage>
+					</FormControl>
+
+					<FormControl id="companySize" isInvalid={!!errors.companySize}>
+						<FormLabel fontSize={"sm"}>Company Size</FormLabel>
+
+						<Select {...register("companySize")}>
+							<option value=""></option>
+							<option value="10">10</option>
+							<option value="100">100</option>
+							<option value="100+">100+</option>
+						</Select>
+						<FormErrorMessage>{errors.companySize && errors.companySize.message}</FormErrorMessage>
+					</FormControl>
+				</Stack>
+
+				<FormControl id="companyAddress" isInvalid={!!errors.companyAddress}>
+					<FormLabel fontSize={"sm"}>Company Address</FormLabel>
+					<Input type="text" {...register("companyAddress")} />
+					<FormErrorMessage>{errors.companyAddress && errors.companyAddress.message}</FormErrorMessage>
+				</FormControl>
+
+				<FormControl id="companyDescription" isInvalid={!!errors.companyDescription}>
+					<FormLabel fontSize={"sm"}>About Company (optional)</FormLabel>
+					<Textarea rows={6} {...register("companyDescription")} />
+					<FormErrorMessage>
+						{errors.companyDescription && errors.companyDescription.message}
+					</FormErrorMessage>
+				</FormControl>
+
 				<Stack spacing={10} pt={2}>
-					<Button type="submit" colorScheme={"brand"} w={"full"} size="lg" isLoading={registeringUser}>
+					<Button type="submit" colorScheme={"brand"} w={"full"} isLoading={registeringEmployer}>
 						Sign up as employer
 					</Button>
 				</Stack>

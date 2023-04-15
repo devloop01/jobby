@@ -131,25 +131,25 @@ export const SignUpForm = () => {
 			<Stack spacing={4} as="form" onSubmit={handleSubmit(onSubmit)}>
 				<Stack direction={useBreakpointValue({ base: "column", sm: "row" })} align={"start"}>
 					<FormControl id="firstName" isInvalid={!!errors.firstName}>
-						<FormLabel>First Name</FormLabel>
+						<FormLabel fontSize={"sm"}>First Name</FormLabel>
 						<Input type="text" {...register("firstName")} />
 						<FormErrorMessage>{errors.firstName && errors.firstName.message}</FormErrorMessage>
 					</FormControl>
 					<FormControl id="lastName" isInvalid={!!errors.lastName}>
-						<FormLabel>Last Name</FormLabel>
+						<FormLabel fontSize={"sm"}>Last Name</FormLabel>
 						<Input type="text" {...register("lastName")} />
 						<FormErrorMessage>{errors.lastName && errors.lastName.message}</FormErrorMessage>
 					</FormControl>
 				</Stack>
 
 				<FormControl id="email" isInvalid={!!errors.email}>
-					<FormLabel>Email address</FormLabel>
+					<FormLabel fontSize={"sm"}>Email address</FormLabel>
 					<Input type="email" {...register("email")} />
 					<FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
 				</FormControl>
 
 				<FormControl id="password" isInvalid={!!errors.password}>
-					<FormLabel>Password</FormLabel>
+					<FormLabel fontSize={"sm"}>Password</FormLabel>
 
 					<InputGroup>
 						<Popover
@@ -270,7 +270,7 @@ export const SignUpForm = () => {
 				</FormControl>
 
 				<FormControl id="confirmPassword" isInvalid={!!errors.confirmPassword}>
-					<FormLabel>Confirm Password</FormLabel>
+					<FormLabel fontSize={"sm"}>Confirm Password</FormLabel>
 					<InputGroup>
 						<Input type={showPassword ? "text" : "password"} {...register("confirmPassword")} />
 						<InputRightElement h={"full"}>
@@ -286,7 +286,7 @@ export const SignUpForm = () => {
 				</FormControl>
 
 				<Stack spacing={10} pt={2}>
-					<Button type="submit" colorScheme={"brand"} w={"full"} size="lg" isLoading={registeringUser}>
+					<Button type="submit" colorScheme={"brand"} w={"full"} isLoading={registeringUser}>
 						Sign up
 					</Button>
 				</Stack>
@@ -302,13 +302,13 @@ export const SignUpForm = () => {
 
 			<Stack>
 				<Button
+					size="lg"
 					variant={"outline"}
 					leftIcon={<IconGoogle />}
-					size="lg"
 					fontSize={"md"}
 					onClick={() => void signIn("google")}
 				>
-					Google
+					Continue with Google
 				</Button>
 			</Stack>
 		</Box>

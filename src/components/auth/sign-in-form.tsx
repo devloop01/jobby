@@ -74,13 +74,13 @@ export const SignInForm = () => {
 			{/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
 			<Stack spacing={4} as="form" onSubmit={handleSubmit(onSubmit)}>
 				<FormControl id="email" isInvalid={!!errors.email}>
-					<FormLabel>Email address</FormLabel>
+					<FormLabel fontSize={"sm"}>Email address</FormLabel>
 					<Input type="email" {...register("email")} />
 					<FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
 				</FormControl>
 
 				<FormControl id="password" isInvalid={!!errors.password}>
-					<FormLabel>Password</FormLabel>
+					<FormLabel fontSize={"sm"}>Password</FormLabel>
 					<InputGroup>
 						<Input type={showPassword ? "text" : "password"} {...register("password")} />
 						<InputRightElement h={"full"}>
@@ -118,9 +118,9 @@ export const SignInForm = () => {
 
 			<Stack>
 				<Button
+					size={"lg"}
 					variant={"outline"}
 					leftIcon={<IconGoogle w={6} h={6} />}
-					size="lg"
 					fontSize={"md"}
 					onClick={() => void signIn("google")}
 				>
