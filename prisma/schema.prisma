@@ -38,6 +38,7 @@ model User {
     lastName        String?
     password        String?
     passwordEnabled Boolean @default(false)
+    isEmployer      Boolean @default(false)
 
     accounts Account[]
 
@@ -52,4 +53,8 @@ model VerificationToken {
 
     @@unique([identifier, token])
     @@map("verification_tokens")
+}
+
+model Employer {
+    id String @id @default(auto()) @map("_id") @db.ObjectId
 }
