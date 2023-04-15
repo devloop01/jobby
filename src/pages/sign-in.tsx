@@ -11,13 +11,13 @@ function SignIn() {
 				<title>Sign In | Jobby</title>
 			</Head>
 			<CleanLayout>
-				<Flex minH={"100vh"} align={"center"} justify={"center"}>
+				<Flex align={"center"} justify={"center"}>
 					<Stack
 						spacing={8}
 						mx={"auto"}
 						minW={useBreakpointValue({ base: "auto", sm: "md" })}
 						maxW={"lg"}
-						py={12}
+						my={{ sm: 6, md: 16, lg: 24 }}
 					>
 						<Stack align={"center"}>
 							<Heading fontSize={"4xl"}>Welcome back!</Heading>
