@@ -115,7 +115,7 @@ export function Header() {
 				{sessionData ? (
 					<Menu isLazy autoSelect={false}>
 						<MenuButton aria-label="Options">
-							<Avatar size={"sm"} name={sessionData.user.name ?? undefined} />
+							<Avatar size={"sm"} name={sessionData.user.name ?? undefined} bg={"brand.500"} />
 						</MenuButton>
 						<Portal>
 							<MenuList>
