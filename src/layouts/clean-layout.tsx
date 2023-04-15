@@ -1,6 +1,6 @@
 import type { ReactNode, FC } from "react"
 
-import { Box, Container, Flex, Text, useBreakpointValue } from "@chakra-ui/react"
+import { Box, Container, Flex, Text } from "@chakra-ui/react"
 import NextLink from "next/link"
 
 type RootLayoutProps = {
@@ -21,15 +21,10 @@ const Header: FC = () => {
 				borderColor={"gray.200"}
 				align={"center"}
 			>
-				<Flex flex={{ base: 1 }} justify={{ base: "center", md: "start" }} align="center">
+				<Flex align="center">
 					<NextLink href={"/"}>
-						<Text
-							textAlign={useBreakpointValue({ base: "center", md: "left" })}
-							fontFamily={"sans-serif"}
-							color={"gray.800"}
-							fontSize={"3xl"}
-						>
-							Logo
+						<Text fontWeight={"bold"} color={"brand.500"} fontSize={"3xl"}>
+							Jobby.
 						</Text>
 					</NextLink>
 				</Flex>
