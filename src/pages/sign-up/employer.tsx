@@ -1,27 +1,34 @@
-import SignUpForm from "@/components/auth/sign-up-form"
-import CleanLayout from "@/layouts/clean-layout"
-import { Flex, Stack, Heading, Text, Link, useBreakpointValue } from "@chakra-ui/react"
 import Head from "next/head"
 import NextLink from "next/link"
+import { Flex, Stack, Heading, Text, Link, useBreakpointValue } from "@chakra-ui/react"
+
+import CleanLayout from "@/layouts/clean-layout"
+import SignUpEmployerForm from "@/components/auth/sign-up-employer-form"
 
 function SignUpEmployer() {
 	return (
 		<>
 			<Head>
-				<title>Sign Up | Jobby</title>
+				<title>Employer - Sign Up | Jobby</title>
 			</Head>
 
 			<CleanLayout>
-				<Flex minH={"100vh"} align={"center"} justify={"center"}>
+				<Flex align={"center"} justify={"center"}>
 					<Stack
 						spacing={8}
 						mx={"auto"}
 						minW={useBreakpointValue({ base: "auto", sm: "md" })}
 						maxW={"lg"}
-						py={12}
+						my={{ sm: 6, md: 16, lg: 24 }}
 					>
 						<Stack align={"center"}>
-							<Heading fontSize={"4xl"}>Create an Account</Heading>
+							<Heading fontSize={"4xl"}>
+								Create an{" "}
+								<Text as="span" color={"brand.500"}>
+									Employer
+								</Text>{" "}
+								Account
+							</Heading>
 							<Text>
 								Already have an account{" "}
 								<Link as={NextLink} href="/sign-in" color="blue.400">
@@ -29,7 +36,7 @@ function SignUpEmployer() {
 								</Link>
 							</Text>
 						</Stack>
-						<SignUpForm />
+						<SignUpEmployerForm />
 						<Text align={"center"}>
 							Are you a job seeker?{" "}
 							<Link as={NextLink} href="/sign-up" color="blue.400">
