@@ -37,8 +37,9 @@ model User {
     firstName       String?
     lastName        String?
     password        String?
-    passwordEnabled Boolean @default(false)
-    isEmployer      Boolean @default(false)
+    passwordEnabled Boolean  @default(false)
+    role            UserRole @default(USER)
+    isEmployer      Boolean  @default(false)
 
     accounts Account[]
 
@@ -57,4 +58,9 @@ model VerificationToken {
 
 model Employer {
     id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+enum UserRole {
+    USER
+    ADMIN
 }
