@@ -32,7 +32,7 @@ function SignUp() {
 						<SignUpForm />
 						<Text align={"center"}>
 							Are you an employer?{" "}
-							<Link as={NextLink} href="/sign-up-employer" color="blue.400">
+							<Link as={NextLink} href="/sign-up/employer" color="blue.400">
 								create employer account
 							</Link>
 						</Text>
