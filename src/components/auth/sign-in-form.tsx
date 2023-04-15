@@ -37,7 +37,7 @@ export const SignInForm = () => {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isSubmitting },
+		formState: { errors },
 	} = useForm<LogInSchema>({
 		resolver: zodResolver(logInSchema),
 	})
@@ -117,7 +117,13 @@ export const SignInForm = () => {
 			</Flex>
 
 			<Stack>
-				<Button variant={"outline"} leftIcon={<IconGoogle w={6} h={6} />} size="lg" fontSize={"md"}>
+				<Button
+					variant={"outline"}
+					leftIcon={<IconGoogle w={6} h={6} />}
+					size="lg"
+					fontSize={"md"}
+					onClick={() => void signIn("google")}
+				>
 					Continue with Google
 				</Button>
 			</Stack>

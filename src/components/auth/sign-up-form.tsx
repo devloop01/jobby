@@ -26,7 +26,6 @@ import {
 	Flex,
 	useBreakpointValue,
 	Alert,
-	AlertDescription,
 	AlertIcon,
 	AlertTitle,
 	useToast,
@@ -41,6 +40,7 @@ import { IconGoogle } from "@/components/icons"
 import { type SignUpSchema, signUpSchema } from "@/utils/schema/auth"
 import { api } from "@/utils/api"
 import { useRouter } from "next/router"
+import { signIn } from "next-auth/react"
 
 function checkPassword(password: string) {
 	const uppercase = z.string().regex(new RegExp(".*[A-Z].*"), "One uppercase character")
@@ -301,7 +301,13 @@ export const SignUpForm = () => {
 			</Flex>
 
 			<Stack>
-				<Button variant={"outline"} leftIcon={<IconGoogle />} size="lg" fontSize={"md"}>
+				<Button
+					variant={"outline"}
+					leftIcon={<IconGoogle />}
+					size="lg"
+					fontSize={"md"}
+					onClick={() => void signIn("google")}
+				>
 					Google
 				</Button>
 			</Stack>
