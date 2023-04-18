@@ -118,7 +118,7 @@ export function Header() {
 							<Avatar size={"sm"} name={sessionData.user.name ?? undefined} bg={"brand.500"} />
 						</MenuButton>
 						<Portal>
-							<MenuList>
+							<MenuList boxShadow={"xl"} border={"1px"} borderColor={"gray.300"}>
 								<Box px={4} py={2}>
 									<Text>{sessionData.user.name ?? ""}</Text>
 									<Text fontSize={"sm"} color={"gray.500"}>

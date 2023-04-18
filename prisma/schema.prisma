@@ -41,7 +41,8 @@ model User {
     role            UserRole @default(USER)
     isEmployer      Boolean  @default(false)
 
-    accounts Account[]
+    accounts         Account[]
+    CandidateProfile CandidateProfile[]
 
     @@map("users")
 }
@@ -63,4 +64,21 @@ model Employer {
 enum UserRole {
     USER
     ADMIN
+}
+
+model CandidateProfile {
+    id                String   @id @default(auto()) @map("_id") @db.ObjectId
+    userId            String   @db.ObjectId
+    fullName          String
+    jobTitle          String?
+    phone             String?
+    email             String   @unique
+    website           String?
+    experienceInYears String?
+    age               String?
+    skills            String[]
+    showInListings    Boolean  @default(true)
+    bio               String?
+
+    user User @relation(fields: [userId], references: [id])
 }

@@ -3,7 +3,8 @@ import { hash } from "argon2"
 
 import { signUpSchema } from "@/utils/schema/auth"
 
-import { createTRPCRouter, publicProcedure } from "../trpc"
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
+import { z } from "zod"
 
 /**
  * User Routers
@@ -14,7 +15,7 @@ export const userRouter = createTRPCRouter({
 		const { firstName, lastName, email, password } = input
 		const { prisma } = ctx
 
-		const user = await prisma.user.findFirst({
+		const user = await prisma.user.findUnique({
 			where: { email },
 		})
 
@@ -29,15 +30,31 @@ export const userRouter = createTRPCRouter({
 
 		const hashedPassword = await hash(password)
 
-		const newUser = await ctx.prisma.user.create({
-			data: {
-				firstName,
-				lastName,
-				name,
-				email,
-				password: hashedPassword,
-				passwordEnabled: true,
-			},
+		const newUser = await prisma.$transaction(async (tx) => {
+			const user = await tx.user.create({
+				data: {
+					firstName,
+					lastName,
+					name,
+					email,
+					password: hashedPassword,
+					passwordEnabled: true,
+				},
+			})
+
+			const candidateProfile = await tx.candidateProfile.create({
+				data: {
+					email,
+					fullName: name,
+					user: {
+						connect: {
+							id: user.id,
+						},
+					},
+				},
+			})
+
+			return user
 		})
 
 		return newUser
@@ -74,5 +91,17 @@ export const userRouter = createTRPCRouter({
 		})
 
 		return newUser
+	}),
+
+	current: protectedProcedure.query(async ({ ctx }) => {
+		return ctx.prisma.user.findUnique({
+			where: { id: ctx.session.user.id },
+		})
+	}),
+
+	findByEmail: protectedProcedure.input(z.string().email()).query(async ({ ctx, input }) => {
+		return ctx.prisma.user.findUnique({
+			where: { email: input },
+		})
 	}),
 })

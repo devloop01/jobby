@@ -3,6 +3,7 @@ import { type Session } from "next-auth"
 import { SessionProvider } from "next-auth/react"
 
 import { ChakraProvider } from "@chakra-ui/react"
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import Head from "next/head"
 
 import "@fontsource/work-sans/latin.css"
@@ -25,6 +26,8 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
 					<Component {...pageProps} />
 				</SessionProvider>
 			</ChakraProvider>
+
+			<ReactQueryDevtools />
 		</>
 	)
 }
