@@ -1,5 +1,5 @@
-import Head from "next/head"
 import { Box, Heading, Container, Text, Button, Stack } from "@chakra-ui/react"
+import Link from "next/link"
 
 export default function Hero() {
 	return (
@@ -22,7 +22,7 @@ export default function Hero() {
 					to your loyal readers by granting them access to your pre-releases and sneak-peaks.
 				</Text>
 				<Stack spacing={6} direction={"row"}>
-					<Button rounded={"full"} px={6} colorScheme={"brand"}>
+					<Button rounded={"full"} px={6} colorScheme={"brand"} as={Link} href={"/jobs"}>
 						Get started
 					</Button>
 					<Button rounded={"full"} px={6}>
