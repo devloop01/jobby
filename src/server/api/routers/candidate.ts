@@ -8,9 +8,17 @@ import { z } from "zod"
  */
 export const candidateRouter = createTRPCRouter({
 	currentProfile: protectedProcedure.query(async ({ ctx }) => {
-		return ctx.prisma.candidateProfile.findFirst({
+		const candidate = await ctx.prisma.candidate.findFirst({
 			where: { userId: ctx.session.user.id },
 		})
+
+		if (!candidate) throw new Error("Candidate does not Exist")
+
+		const candidateProfile = await ctx.prisma.candidateProfile.findFirst({
+			where: { candidateId: candidate.id },
+		})
+
+		return candidateProfile
 	}),
 
 	updateProfile: publicProcedure
