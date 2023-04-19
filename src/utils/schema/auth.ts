@@ -31,8 +31,6 @@ export const logInSchema = z.object({
 
 export const signUpEmployerSchema = z
 	.object({
-		firstName: z.string().min(1, "First Name is required"),
-		lastName: z.string().optional(),
 		email: z.string().min(1, "Email is required").email("Invalid email"),
 		password: z
 			.string()
@@ -52,6 +50,7 @@ export const signUpEmployerSchema = z
 			.string()
 			.min(1, "Phone is required")
 			.refine((s) => validator.isMobilePhone(s, "en-IN"), { message: "Invalid Phone" }),
+		companyEmail: z.string().min(1, "Email is required").email("Invalid email"),
 		companyWebsite: z.string().min(1, "Website is required").url("Invalid URL"),
 		companyFoundedYear: z.string().regex(new RegExp("^([0-9]{4})?$"), "Invalid Year").optional(),
 		companySize: z.string().min(1, "Please select a value"),

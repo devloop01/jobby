@@ -126,21 +126,8 @@ export const SignUpForm = () => {
 
 			{/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
 			<Stack spacing={4} as="form" onSubmit={handleSubmit(onSubmit)}>
-				<Stack direction={useBreakpointValue({ base: "column", sm: "row" })} align={"start"}>
-					<FormControl id="firstName" isInvalid={!!errors.firstName}>
-						<FormLabel fontSize={"sm"}>First Name</FormLabel>
-						<Input type="text" {...register("firstName")} />
-						<FormErrorMessage>{errors.firstName && errors.firstName.message}</FormErrorMessage>
-					</FormControl>
-					<FormControl id="lastName" isInvalid={!!errors.lastName}>
-						<FormLabel fontSize={"sm"}>Last Name</FormLabel>
-						<Input type="text" {...register("lastName")} />
-						<FormErrorMessage>{errors.lastName && errors.lastName.message}</FormErrorMessage>
-					</FormControl>
-				</Stack>
-
 				<FormControl id="email" isInvalid={!!errors.email}>
-					<FormLabel fontSize={"sm"}>Email address</FormLabel>
+					<FormLabel fontSize={"sm"}>Email</FormLabel>
 					<Input type="email" {...register("email")} />
 					<FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
 				</FormControl>
@@ -294,6 +281,12 @@ export const SignUpForm = () => {
 						<FormErrorMessage>{errors.companyPhone && errors.companyPhone.message}</FormErrorMessage>
 					</FormControl>
 				</Stack>
+
+				<FormControl id="companyEmail" isInvalid={!!errors.companyEmail}>
+					<FormLabel fontSize={"sm"}>Company Email</FormLabel>
+					<Input type="text" {...register("companyEmail")} />
+					<FormErrorMessage>{errors.companyEmail && errors.companyEmail.message}</FormErrorMessage>
+				</FormControl>
 
 				<FormControl id="companyWebsite" isInvalid={!!errors.companyWebsite}>
 					<FormLabel fontSize={"sm"}>Company Website</FormLabel>

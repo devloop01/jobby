@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server"
 import { hash } from "argon2"
 
-import { signUpSchema } from "@/utils/schema/auth"
+import { signUpEmployerSchema, signUpSchema } from "@/utils/schema/auth"
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
 import { z } from "zod"
@@ -42,13 +42,26 @@ export const userRouter = createTRPCRouter({
 				},
 			})
 
+			const candidate = await tx.candidate.create({
+				data: {
+					email,
+					firstName,
+					lastName,
+					user: {
+						connect: {
+							id: user.id,
+						},
+					},
+				},
+			})
+
 			const candidateProfile = await tx.candidateProfile.create({
 				data: {
 					email,
 					fullName: name,
-					user: {
+					candidate: {
 						connect: {
-							id: user.id,
+							id: candidate.id,
 						},
 					},
 				},
@@ -60,8 +73,8 @@ export const userRouter = createTRPCRouter({
 		return newUser
 	}),
 
-	registerEmployer: publicProcedure.input(signUpSchema).mutation(async ({ input, ctx }) => {
-		const { firstName, lastName, email, password } = input
+	registerEmployer: publicProcedure.input(signUpEmployerSchema).mutation(async ({ input, ctx }) => {
+		const { email, password } = input
 		const { prisma } = ctx
 
 		const user = await prisma.user.findFirst({
@@ -75,19 +88,46 @@ export const userRouter = createTRPCRouter({
 			})
 		}
 
-		const name = [firstName, lastName].join(" ")
-
 		const hashedPassword = await hash(password)
 
-		const newUser = await ctx.prisma.user.create({
-			data: {
-				firstName,
-				lastName,
-				name,
-				email,
-				password: hashedPassword,
-				passwordEnabled: true,
-			},
+		const newUser = await prisma.$transaction(async (tx) => {
+			const user = await tx.user.create({
+				data: {
+					email,
+					password: hashedPassword,
+					passwordEnabled: true,
+					isEmployer: true,
+				},
+			})
+
+			const employer = await tx.employer.create({
+				data: {
+					email,
+					companyName: input.companyName,
+					companySize: input.companySize,
+					companyWebsite: input.companyWebsite,
+					companyFoundedYear: input.companyFoundedYear,
+					companyPhone: input.companyPhone,
+					companyEmail: input.companyEmail,
+					companyAddress: input.companyAddress,
+					companyDescription: input.companyDescription,
+					user: {
+						connect: { id: user.id },
+					},
+				},
+			})
+
+			const employerProfile = await tx.employerProfile.create({
+				data: {
+					employer: {
+						connect: {
+							id: employer.id,
+						},
+					},
+				},
+			})
+
+			return user
 		})
 
 		return newUser
