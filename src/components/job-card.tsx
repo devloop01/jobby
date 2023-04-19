@@ -19,11 +19,24 @@ export function JobCard() {
 	const [liked, setLiked] = useState(false)
 
 	return (
-		<Card rounded={"sm"} overflow={"hidden"} bg="white" border={"1px"} borderColor={"gray.300"}>
+		<Card
+			rounded={"sm"}
+			overflow={"hidden"}
+			bg="white"
+			border={"1px"}
+			borderColor={"gray.300"}
+			transitionProperty={"transform, box-shadow"}
+			transitionDuration={"100ms"}
+			transitionTimingFunction={"ease-in-out"}
+			_hover={{
+				transform: "translateY(-3px)",
+				boxShadow: "lg",
+			}}
+		>
 			<Stack p={6}>
 				<HStack justify={"space-between"}>
 					<HStack align={"start"}>
-						<Image src={"./google.svg"} height={50} width={50} alt={"Company Avatar"} />
+						<Image src={"/google.svg"} height={50} width={50} alt={"Company Avatar"} />
 
 						<Stack spacing={0}>
 							<Link

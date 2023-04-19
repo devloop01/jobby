@@ -3,7 +3,6 @@ import RootLayout from "@/layouts/root-layout"
 import {
 	Box,
 	Button,
-	Center,
 	Divider,
 	Flex,
 	Grid,
@@ -12,12 +11,10 @@ import {
 	Heading,
 	Icon,
 	IconButton,
-	List,
 	ListItem,
 	Stack,
 	Text,
 	UnorderedList,
-	useBreakpointValue,
 } from "@chakra-ui/react"
 import {
 	IconBrandFacebook,
@@ -27,24 +24,26 @@ import {
 	IconBrandTwitter,
 	IconBrandTwitterFilled,
 	IconCash,
-	IconCoinRupee,
 	IconHourglass,
 	IconMapPin,
 	IconUser,
 } from "@tabler/icons-react"
-import { IconBookmark, IconBriefcase, IconBuilding, IconCalendar, IconClock } from "@tabler/icons-react"
+import { IconBookmark, IconBriefcase, IconCalendar, IconClock } from "@tabler/icons-react"
+import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 import Head from "next/head"
 import Image from "next/image"
 import NextLink from "next/link"
 
 // eslint-disable-next-line @typescript-eslint/require-await
-export async function getServerSideProps() {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+	const id = context.query.id as string
+
 	return {
-		props: {},
+		props: { id },
 	}
 }
 
-export default function JobDetails() {
+export default function JobDetails(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 	return (
 		<>
 			<Head>
