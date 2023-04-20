@@ -11,7 +11,7 @@ export default function Employers() {
 			</Head>
 
 			<RootLayout>
-				<Box py={12} textAlign={"center"}>
+				<Box textAlign={"center"}>
 					<Heading
 						fontSize={"5xl"}
 						fontWeight={900}

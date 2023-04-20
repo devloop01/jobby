@@ -1,5 +1,5 @@
 import RootLayout from "@/layouts/root-layout"
-import { Heading } from "@chakra-ui/react"
+import { Heading, Stack } from "@chakra-ui/react"
 import { type GetServerSidePropsContext } from "next"
 import Head from "next/head"
 
@@ -14,11 +14,13 @@ export default function CreateJob() {
 	return (
 		<>
 			<Head>
-				<title>Create Job | Jobby</title>
+				<title>Create a Job | Jobby</title>
 			</Head>
 
 			<RootLayout>
-				<Heading>Create Job</Heading>
+				<Stack>
+					<Heading>Create Job</Heading>
+				</Stack>
 			</RootLayout>
 		</>
 	)

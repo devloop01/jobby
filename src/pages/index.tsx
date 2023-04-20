@@ -11,9 +11,7 @@ const Home: NextPage = () => {
 	return (
 		<>
 			<RootLayout>
-				<Box py={8}>
-					<Hero />
-				</Box>
+				<Hero />
 			</RootLayout>
 		</>
 	)

@@ -52,7 +52,7 @@ export default function JobDetails(props: InferGetServerSidePropsType<typeof get
 
 			<RootLayout>
 				<Stack>
-					<Stack py={8} spacing={6}>
+					<Stack spacing={6}>
 						<Box w={"full"} height={"300px"} overflow={"hidden"} pos={"relative"}>
 							<Image
 								src="/cover.jpg"

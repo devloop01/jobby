@@ -52,7 +52,7 @@ export default function Profile({}: InferGetServerSidePropsType<typeof getServer
 			</Head>
 
 			<RootLayout>
-				<Stack py={{ base: 6, md: 12 }}>
+				<Stack>
 					<ProfileLayout>
 						<Stack px={{ base: 6, md: 12 }}>
 							<Heading as="h2" size="lg">

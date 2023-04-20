@@ -11,7 +11,7 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => {
 	return (
 		<Box>
 			<Header />
-			<Container as={"main"} maxW="1560px" minH={"calc(100vh - 100px)"}>
+			<Container as={"main"} maxW="1560px" minH={"calc(100vh - 100px)"} py={12}>
 				{children}
 			</Container>
 			<Footer />

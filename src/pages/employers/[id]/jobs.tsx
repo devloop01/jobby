@@ -22,19 +22,17 @@ export default function CompanyJobs(props: InferGetServerSidePropsType<typeof ge
 			</Head>
 
 			<RootLayout>
-				<Box py={12}>
-					<Stack spacing={6}>
-						<Heading>Jobs by {props.id}</Heading>
+				<Stack spacing={6}>
+					<Heading>Jobs by {props.id}</Heading>
 
-						<Grid templateColumns={{ md: "repeat(3, 1fr)" }} gap={8}>
-							{Array.from({ length: 10 }, () => 0).map((_, i) => (
-								<GridItem key={i}>
-									<JobCard />
-								</GridItem>
-							))}
-						</Grid>
-					</Stack>
-				</Box>
+					<Grid templateColumns={{ md: "repeat(3, 1fr)" }} gap={8}>
+						{Array.from({ length: 10 }, () => 0).map((_, i) => (
+							<GridItem key={i}>
+								<JobCard />
+							</GridItem>
+						))}
+					</Grid>
+				</Stack>
 			</RootLayout>
 		</>
 	)

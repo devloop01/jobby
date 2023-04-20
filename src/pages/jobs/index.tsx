@@ -28,7 +28,7 @@ export default function Jobs() {
 			</Head>
 
 			<RootLayout>
-				<Stack spacing={6} py={20} textAlign={"center"} bg={"blue.500"}>
+				<Stack spacing={6} textAlign={"center"} bg={"blue.500"}>
 					<Heading color={"white"} fontSize={"4xl"}>
 						Find perfect jobs for yourself
 					</Heading>
