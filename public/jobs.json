@@ -1,0 +1,97 @@
+[
+	{
+		"title": "PHP Developer",
+		"description": "Needs to know php and should have a decent experience on php frameworks",
+		"keyResponsibilities": [
+			{ "value": "Backend" },
+			{ "value": "Present your work to the wider business at Show & Tell sessions." }
+		],
+		"skillAndExperience": [
+			{ "value": "You have at least 3 years’ experience working as a Product Designer." },
+			{ "value": "" }
+		],
+		"location": "Siliguri",
+		"hours": "100",
+		"salary": "200000",
+		"expirationDate": "2023-04-30T00:00:00.000+00:00",
+		"employerId": "644049876adcfd1a948ed76f"
+	},
+
+	{
+		"title": "UI Designer",
+		"description": "Should have a good sense of UI design knowledge",
+		"keyResponsibilities": [{ "value": "Designing" }, { "value": "Presenting" }],
+		"skillAndExperience": [
+			{ "value": "You have at least 3 years’ experience." },
+			{ "value": "Should be creative" }
+		],
+		"location": "Mumbai",
+		"hours": "100",
+		"salary": "200000",
+		"expirationDate": "2023-04-30T00:00:00.000+00:00",
+		"employerId": "644049876adcfd1a948ed76f"
+	},
+
+	{
+		"title": "Manga artist",
+		"description": "Should be a good sense of creating and drawing mangas",
+		"keyResponsibilities": [{ "value": "Drawing" }, { "value": "Story creation" }],
+		"skillAndExperience": [
+			{ "value": "You have at least 3 years’ experience." },
+			{ "value": "Should be creative" }
+		],
+		"location": "Delhi",
+		"hours": "100",
+		"salary": "200000",
+		"expirationDate": "2023-04-30T00:00:00.000+00:00",
+		"employerId": "644049876adcfd1a948ed76f"
+	},
+
+	{
+		"title": "Content writer",
+		"description": "Should have a good knowledge in english",
+		"keyResponsibilities": [
+			{ "value": "Creating posts for social media" },
+			{ "value": "Writing blogs for website" }
+		],
+		"skillAndExperience": [
+			{ "value": "You have at least 3 years’ experience." },
+			{ "value": "Should be creative" }
+		],
+		"location": "Kolkata",
+		"hours": "100",
+		"salary": "200000",
+		"expirationDate": "2023-04-30T00:00:00.000+00:00",
+		"employerId": "644049876adcfd1a948ed76f"
+	},
+
+	{
+		"title": "Accountant",
+		"description": "An Accountant helps businesses make critical financial decisions by collecting, tracking, and correcting the company's finances.",
+		"keyResponsibilities": [{ "value": "financial audits" }, { "value": "reconciling bank statements" }],
+		"skillAndExperience": [
+			{ "value": "You have at least 3 years’ experience." },
+			{ "value": "Should be creative" }
+		],
+		"location": "Chennai",
+		"hours": "100",
+		"salary": "200000",
+		"expirationDate": "2023-04-30T00:00:00.000+00:00",
+		"employerId": "644049876adcfd1a948ed76f"
+	},
+
+	{
+		"title": "Teacher",
+		"description": "Should have a good sense of teaching students.",
+		"keyResponsibilities": [{ "value": "Teaching" }, { "value": "Helping in develop child's talent." }],
+		"skillAndExperience": [
+			{ "value": "You have at least 3 years’ experience." },
+			{ "value": "Should be creative" }
+		],
+		"location": "Darjeeling",
+		"hours": "100",
+		"salary": "200000",
+		"expirationDate": "2023-04-30T00:00:00.000+00:00",
+		"employerId": "644049876adcfd1a948ed76f"
+	}
+]

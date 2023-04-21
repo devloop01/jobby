@@ -102,6 +102,7 @@ model Employer {
 
     user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
     employer EmployerProfile?
+    jobs     JobPosting[]
 
     @@map("employers")
 }
@@ -135,19 +136,24 @@ model EmployerProfile {
     @@map("employer_profiles")
 }
 
+type Field {
+    value String
+}
+
 model JobPosting {
     id                  String   @id @default(auto()) @map("_id") @db.ObjectId
     title               String
     description         String
-    keyResponsibilities String[]
-    skillAndExperience  String[]
+    keyResponsibilities Field[]
+    skillAndExperience  Field[]
     location            String
-    jobTitle            String
     hours               String
     salary              String
     expirationDate      DateTime
     createdAt           DateTime @default(now())
     updatedAt           DateTime @updatedAt
+    employer            Employer @relation(fields: [employerId], references: [id], onDelete: Cascade)
+    employerId          String   @db.ObjectId
 
     @@map("job_postings")
 }

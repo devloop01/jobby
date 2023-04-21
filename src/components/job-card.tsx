@@ -14,8 +14,13 @@ import {
 } from "@tabler/icons-react"
 import Image from "next/image"
 import Link from "next/link"
+import { type JobPosting } from "@prisma/client"
 
-export function JobCard() {
+interface JobCardProps {
+	job: JobPosting
+}
+
+export function JobCard({ job }: JobCardProps) {
 	const [liked, setLiked] = useState(false)
 
 	return (
@@ -52,7 +57,7 @@ export function JobCard() {
 
 							<HStack color={"gray.500"}>
 								<Icon as={IconMapPin} />
-								<Text>New Delhi</Text>
+								<Text>{job.location}</Text>
 							</HStack>
 						</Stack>
 					</HStack>
@@ -67,29 +72,20 @@ export function JobCard() {
 						}}
 					>
 						<Heading fontSize={"2xl"} _hover={{ color: "blue.600" }}>
-							Software Engineer (Android), Libraries
+							{job.title}
 						</Heading>
 					</Link>
 
 					<HStack color={"gray.500"} spacing={4} flexWrap={"wrap"}>
 						<HStack>
 							<Icon as={IconCoinRupee} />
-							<Text>₹35k - ₹45k</Text>
+							<Text>₹{job.salary}</Text>
 						</HStack>
 
 						<HStack>
 							<Icon as={IconClock} />
 							<Text>11 hours ago</Text>
 						</HStack>
-					</HStack>
-
-					<HStack>
-						<Badge color="white" bg="blue.400" py={1} px={2}>
-							Adobe
-						</Badge>
-						<Badge color="white" bg="blue.400" py={1} px={2}>
-							Figma
-						</Badge>
 					</HStack>
 				</Stack>
 			</Stack>

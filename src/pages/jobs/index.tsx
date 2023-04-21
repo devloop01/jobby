@@ -1,5 +1,6 @@
 import JobCard from "@/components/job-card"
 import RootLayout from "@/layouts/root-layout"
+import { api } from "@/utils/api"
 import {
 	Box,
 	Button,
@@ -21,6 +22,8 @@ import { IconBriefcase, IconMapPin, IconSearch } from "@tabler/icons-react"
 import Head from "next/head"
 
 export default function Jobs() {
+	const { data: jobs } = api.job.find.useQuery()
+
 	return (
 		<>
 			<Head>
@@ -95,13 +98,12 @@ export default function Jobs() {
 						</Stack>
 					</Flex>
 
-					<Grid templateColumns={{ md: "repeat(2, 1fr)" }} gap={8}>
-						<GridItem>
-							<JobCard />
-						</GridItem>
-						<GridItem>
-							<JobCard />
-						</GridItem>
+					<Grid templateColumns={{ md: "repeat(3, 1fr)" }} gap={8}>
+						{jobs?.map((job) => (
+							<GridItem key={job.id}>
+								<JobCard job={job} />
+							</GridItem>
+						))}
 					</Grid>
 				</Stack>
 			</RootLayout>
