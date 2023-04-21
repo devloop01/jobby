@@ -41,13 +41,14 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { IconCircleCheckFilled, IconCircleXFilled, IconEye, IconEyeOff, IconPlus, IconX } from "@tabler/icons-react"
 import { useState } from "react"
 import { api } from "@/utils/api"
+import { isEmployer } from "@/utils"
 
 // eslint-disable-next-line @typescript-eslint/require-await
-export async function getServerSideProps(context: GetServerSidePropsContext) {
+export const getServerSideProps = isEmployer(async (context: GetServerSidePropsContext) => {
 	return {
 		props: {},
 	}
-}
+})
 
 export default function CreateJob() {
 	const toast = useToast()

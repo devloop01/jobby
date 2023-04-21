@@ -27,6 +27,7 @@ import { signOut, useSession } from "next-auth/react"
 import NextLink from "next/link"
 import { IconUser } from "@tabler/icons-react"
 import { IconLogout } from "@tabler/icons-react"
+import { forwardRef } from "react"
 
 interface NavItem {
 	label: string
@@ -69,13 +70,13 @@ const NAV_ITEMS: Array<NavItem> = [
 	// },
 ]
 
-export function Header() {
+export const Header = forwardRef<HTMLDivElement>((_, ref) => {
 	const { isOpen, onToggle } = useDisclosure()
 
 	const { data: sessionData } = useSession()
 
 	return (
-		<Box as="header">
+		<Box as="header" ref={ref}>
 			<Flex
 				bg={"white"}
 				color={"gray.600"}
@@ -167,7 +168,9 @@ export function Header() {
 			</Collapse>
 		</Box>
 	)
-}
+})
+
+Header.displayName = "Header"
 
 export default Header
 

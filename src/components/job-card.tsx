@@ -65,7 +65,12 @@ export function JobCard({ jobId }: JobCardProps) {
 									query: { employerId: employer.id },
 								}}
 							>
-								<Text fontSize={"lg"} fontWeight={600} _hover={{ color: "blue.600" }}>
+								<Text
+									fontSize={"lg"}
+									fontWeight={600}
+									_hover={{ color: "blue.600" }}
+									textAlign={"left"}
+								>
 									{employer.companyName}
 								</Text>
 							</Link>
@@ -79,6 +84,7 @@ export function JobCard({ jobId }: JobCardProps) {
 
 					<IconButton aria-label="Bookmark Job" icon={<Icon as={IconBookmark} />} />
 				</HStack>
+
 				<Stack flexGrow={1}>
 					<Link
 						href={{
@@ -86,7 +92,7 @@ export function JobCard({ jobId }: JobCardProps) {
 							query: { jobId: job.id },
 						}}
 					>
-						<Heading fontSize={"2xl"} _hover={{ color: "blue.600" }}>
+						<Heading fontSize={"2xl"} _hover={{ color: "blue.600" }} textAlign={"left"}>
 							{job.title}
 						</Heading>
 					</Link>
@@ -103,6 +109,22 @@ export function JobCard({ jobId }: JobCardProps) {
 						</HStack>
 					</HStack>
 				</Stack>
+
+				<HStack flexWrap={"wrap"}>
+					{job.categories.map((category) => (
+						<Badge
+							key={category}
+							textTransform={"uppercase"}
+							px={2}
+							py={1}
+							bg="blue.400"
+							color="white"
+							borderRadius="full"
+						>
+							{category}
+						</Badge>
+					))}
+				</HStack>
 			</Stack>
 		</Card>
 	)

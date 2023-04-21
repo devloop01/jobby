@@ -1,4 +1,4 @@
-import { type ReactNode } from "react"
+import { forwardRef, type ReactNode } from "react"
 
 import {
 	Box,
@@ -23,9 +23,9 @@ const ListHeader = ({ children }: { children: ReactNode }) => {
 	)
 }
 
-export function Footer() {
+export const Footer = forwardRef<HTMLDivElement>((_, ref) => {
 	return (
-		<Box bg={"gray.100"} color={"gray.700"}>
+		<Box bg={"gray.100"} color={"gray.700"} as="footer" ref={ref}>
 			<Container as={Stack} maxW={"7xl"} py={10}>
 				<SimpleGrid templateColumns={{ sm: "1fr 1fr", md: "2fr 1fr 1fr 1fr 1fr" }} spacing={8}>
 					<Stack spacing={6}>
@@ -68,7 +68,9 @@ export function Footer() {
 			</Container>
 		</Box>
 	)
-}
+})
+
+Footer.displayName = "Footer"
 
 export default Footer
 

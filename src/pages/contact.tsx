@@ -1,20 +1,15 @@
+import ContactForm from "@/components/contact-form"
 import RootLayout from "@/layouts/root-layout"
 import {
 	Box,
-	Button,
 	Container,
 	Flex,
-	FormControl,
-	FormLabel,
 	Grid,
 	GridItem,
 	HStack,
 	Heading,
 	IconButton,
-	Input,
-	InputGroup,
 	Text,
-	Textarea,
 	VStack,
 } from "@chakra-ui/react"
 import {
@@ -70,7 +65,7 @@ export default function Contact() {
 															<Text fontSize={"sm"} fontWeight={300}>
 																Email
 															</Text>
-															<Text fontSize={"sm"}>jobbcontact@jobby.com</Text>
+															<Text fontSize={"sm"}>contact@jobby.com</Text>
 														</Flex>
 													</Flex>
 												</Box>
@@ -81,7 +76,7 @@ export default function Contact() {
 															<Text fontSize={"sm"} fontWeight={300}>
 																Address
 															</Text>
-															<Text fontSize={"sm"}>844 Morris Park avenue</Text>
+															<Text fontSize={"sm"}>West Bengal, Siliguri</Text>
 														</Flex>
 													</Flex>
 												</Box>
@@ -117,60 +112,7 @@ export default function Contact() {
 								</GridItem>
 
 								<GridItem>
-									<Box bg="white" borderRadius="lg" boxShadow={"xl"}>
-										<Box p={8} color="#0B0E3F">
-											<VStack spacing={5}>
-												<FormControl id="email">
-													<FormLabel>Email</FormLabel>
-													<InputGroup borderColor="#E0E1E7">
-														<Input
-															type="email"
-															placeholder="johndoe@email.com"
-															_placeholder={{
-																color: "gray.400",
-																fontSize: "sm",
-															}}
-															size="md"
-														/>
-													</InputGroup>
-												</FormControl>
-
-												<FormControl id="name">
-													<FormLabel>Name</FormLabel>
-													<InputGroup borderColor="#E0E1E7">
-														<Input
-															type="text"
-															placeholder="John Doe"
-															_placeholder={{
-																color: "gray.400",
-																fontSize: "sm",
-															}}
-															size="md"
-														/>
-													</InputGroup>
-												</FormControl>
-
-												<FormControl id="message">
-													<FormLabel>Message</FormLabel>
-													<Textarea
-														rows={6}
-														placeholder="your message here"
-														_placeholder={{
-															color: "gray.400",
-															fontSize: "sm",
-														}}
-													/>
-												</FormControl>
-												<FormControl>
-													<Flex justify={"end"}>
-														<Button colorScheme={"brand"} fontSize={"sm"}>
-															Send Message
-														</Button>
-													</Flex>
-												</FormControl>
-											</VStack>
-										</Box>
-									</Box>
+									<ContactForm />
 								</GridItem>
 							</Grid>
 						</Box>

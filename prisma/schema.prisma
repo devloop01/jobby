@@ -124,7 +124,7 @@ model JobPosting {
     description         String
     keyResponsibilities Field[]
     skillAndExperience  Field[]
-    // categories          String[]
+    categories          String[]
     location            String
     hours               String
     salary              String

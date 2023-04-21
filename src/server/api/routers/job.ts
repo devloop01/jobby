@@ -1,4 +1,4 @@
-import { createTRPCRouter, protectedProcedure } from "../trpc"
+import { createTRPCRouter, protectedProcedure, employerProcedure } from "../trpc"
 import { z } from "zod"
 import { jobCreateSchema } from "@/utils/schema/job"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime"
@@ -9,7 +9,7 @@ import { TRPCClientError } from "@trpc/client"
  * route: /api/trpc/job
  */
 export const jobRouter = createTRPCRouter({
-	create: protectedProcedure.input(jobCreateSchema).mutation(async ({ ctx, input }) => {
+	create: employerProcedure.input(jobCreateSchema).mutation(async ({ ctx, input }) => {
 		const newJob = await ctx.prisma.jobPosting.create({
 			data: {
 				...input,
@@ -34,6 +34,7 @@ export const jobRouter = createTRPCRouter({
 			z
 				.object({
 					jobTitle: z.string().min(1).optional(),
+					limit: z.number().positive().default(10).optional(),
 				})
 				.optional()
 		)
@@ -43,8 +44,10 @@ export const jobRouter = createTRPCRouter({
 					where: {
 						title: {
 							contains: input?.jobTitle ?? undefined,
+							mode: "insensitive",
 						},
 					},
+					take: input?.limit,
 				})
 
 				return jobs

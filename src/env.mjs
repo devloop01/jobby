@@ -6,7 +6,9 @@ import { z } from "zod"
  */
 const server = z.object({
 	DATABASE_URL: z.string().url(),
+
 	NODE_ENV: z.enum(["development", "test", "production"]),
+
 	NEXTAUTH_SECRET: process.env.NODE_ENV === "production" ? z.string().min(1) : z.string().min(1).optional(),
 	NEXTAUTH_URL: z.preprocess(
 		// This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
@@ -15,9 +17,11 @@ const server = z.object({
 		// VERCEL_URL doesn't include `https` so it cant be validated as a URL
 		process.env.VERCEL ? z.string().min(1) : z.string().url()
 	),
-	// Add `.min(1) on ID and SECRET if you want to make sure they're not empty
-	GOOGLE_CLIENT_ID: z.string(),
-	GOOGLE_CLIENT_SECRET: z.string(),
+
+	SENDGRID_SMTP_SERVER: z.string(),
+	SENDGRID_SMTP_PORT: z.string(),
+	SENDGRID_USERNAME: z.string(),
+	SENDGRID_API_KEY: z.string(),
 })
 
 /**
@@ -42,8 +46,11 @@ const processEnv = {
 	NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
 	NEXTAUTH_URL: process.env.NEXTAUTH_URL,
 
-	GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-	GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+	SENDGRID_SMTP_SERVER: process.env.SENDGRID_SMTP_SERVER,
+	SENDGRID_SMTP_PORT: process.env.SENDGRID_SMTP_PORT,
+	SENDGRID_USERNAME: process.env.SENDGRID_USERNAME,
+	SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
+
 	// NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 }
 
