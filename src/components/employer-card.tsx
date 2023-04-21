@@ -1,36 +1,20 @@
 import { useState } from "react"
-import {
-	Box,
-	Heading,
-	Text,
-	Img,
-	Flex,
-	HStack,
-	Card,
-	IconButton,
-	Icon,
-	Stack,
-	Badge,
-	Button,
-	LinkBox,
-} from "@chakra-ui/react"
-import {
-	IconArrowUpRight,
-	IconHeartFilled,
-	IconHeart,
-	IconBookmark,
-	IconBriefcase,
-	IconMapPin,
-	IconClock,
-	IconCash,
-	IconMoneybag,
-	IconCoinRupee,
-} from "@tabler/icons-react"
+import { Box, Text, HStack, Card, Icon, Stack, Button, Skeleton } from "@chakra-ui/react"
+import { IconMapPin } from "@tabler/icons-react"
 import Image from "next/image"
 import NextLink from "next/link"
+import { api } from "@/utils/api"
 
-export function EmployerCard() {
+interface EmployerCardProps {
+	employerId: string
+}
+
+export function EmployerCard({ employerId }: EmployerCardProps) {
+	const { data: employer, isLoading: employerLoading } = api.employer.findById.useQuery(employerId)
+
 	const [liked, setLiked] = useState(false)
+
+	if (!employer || employerLoading) return <Skeleton h={"200px"} />
 
 	return (
 		<Card
@@ -55,17 +39,17 @@ export function EmployerCard() {
 						<NextLink
 							href={{
 								pathname: "/employers/[employerId]",
-								query: { employerId: "random-id" },
+								query: { employerId: employer.id },
 							}}
 						>
 							<Text fontSize={"xl"} fontWeight={600} _hover={{ color: "blue.500" }}>
-								Google
+								{employer.companyName}
 							</Text>
 						</NextLink>
 
 						<HStack color={"gray.500"}>
 							<Icon as={IconMapPin} />
-							<Text>New Delhi</Text>
+							<Text>{employer.companyAddress}</Text>
 						</HStack>
 					</Box>
 
@@ -73,7 +57,7 @@ export function EmployerCard() {
 						as={NextLink}
 						href={{
 							pathname: "/employers/[employerId]/jobs",
-							query: { employerId: "random-id" },
+							query: { employerId: employer.id },
 						}}
 					>
 						12 Jobs Open

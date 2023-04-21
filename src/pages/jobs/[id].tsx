@@ -1,8 +1,10 @@
 import { IconGoogle } from "@/components/icons"
 import RootLayout from "@/layouts/root-layout"
+import { api } from "@/utils/api"
 import {
 	Box,
 	Button,
+	Center,
 	Divider,
 	Flex,
 	Grid,
@@ -12,6 +14,7 @@ import {
 	Icon,
 	IconButton,
 	ListItem,
+	Spinner,
 	Stack,
 	Text,
 	UnorderedList,
@@ -36,43 +39,53 @@ import NextLink from "next/link"
 
 // eslint-disable-next-line @typescript-eslint/require-await
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-	const id = context.query.id as string
+	const jobId = context.query.id as string
 
 	return {
-		props: { id },
+		props: { jobId },
 	}
 }
 
-export default function JobDetails(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function JobDetails({ jobId }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+	const { data: job, isLoading: jobLoading } = api.job.findById.useQuery(jobId)
+
+	const employerId = job?.employerId
+
+	const { data: employer, isLoading: employerLoading } = api.employer.findById.useQuery(employerId!, {
+		enabled: !!employerId,
+	})
+
+	if (!job || jobLoading || !employer || employerLoading)
+		return (
+			<Center h={"100vh"}>
+				<Spinner />
+			</Center>
+		)
+
 	return (
 		<>
 			<Head>
-				<title> | Jobby</title>
+				<title>{`${job.title} | Jobby`}</title>
 			</Head>
 
 			<RootLayout>
 				<Stack>
 					<Stack spacing={6}>
-						<Box w={"full"} height={"300px"} overflow={"hidden"} pos={"relative"}>
-							<Image
-								src="/cover.jpg"
-								alt="company cover"
-								width={1280}
-								height={300}
-								style={{
-									position: "absolute",
-									width: "100%",
-									height: "100%",
-									objectFit: "cover",
-								}}
-							/>
+						<Box py={12} bgGradient={"linear(to-r, white, blue.100)"}>
+							<Center>
+								<Stack textAlign={"center"}>
+									<Image src={"/google.svg"} height={120} width={120} alt={"Company Avatar"} />
+									<Text fontSize={"3xl"} fontWeight={600}>
+										{employer.companyName}
+									</Text>
+								</Stack>
+							</Center>
 						</Box>
+
 						<Flex justify={"space-between"} gap={4} direction={{ base: "column", md: "row" }}>
 							<Box>
 								<Box>
-									<Heading fontSize={"3xl"}>
-										Senior Full Stack Engineer, Creator Success Full Time
-									</Heading>
+									<Heading fontSize={"3xl"}>{job.title}</Heading>
 
 									<HStack>
 										<HStack color={"gray.500"}>
@@ -113,14 +126,7 @@ export default function JobDetails(props: InferGetServerSidePropsType<typeof get
 									<Heading as="h3" fontSize={"2xl"}>
 										Job Description
 									</Heading>
-									<Text color={"gray.700"}>
-										As a Product Designer, you will work within a Product Delivery Team fused with
-										UX, engineering, product and data talent. You will help the team design
-										beautiful interfaces that solve business challenges for our clients. We work
-										with a number of Tier 1 banks on building web-based applications for AML, KYC
-										and Sanctions List management workflows. This role is ideal if you are looking
-										to segue your career into the FinTech or Big Data arenas.
-									</Text>
+									<Text color={"gray.700"}>{job.description}</Text>
 								</Stack>
 
 								<Stack>
@@ -128,17 +134,8 @@ export default function JobDetails(props: InferGetServerSidePropsType<typeof get
 										Key Responsibilities
 									</Heading>
 									<UnorderedList px={4} spacing={2} color={"gray.700"}>
-										{[
-											"Be involved in every step of the product design cycle from discovery to developer handoff and user acceptance testing.",
-											"Work with BAs, product managers and tech teams to lead the Product Design",
-											"Maintain quality of the design process and ensure that when designs are translated into code they accurately reflect the design specifications.",
-											"Accurately estimate design tickets during planning sessions.",
-											"Contribute to sketching sessions involving non-designersCreate, iterate and maintain UI deliverables including sketch files, style guides, high fidelity prototypes, micro interaction specifications and pattern libraries.",
-											"Ensure design choices are data led by identifying assumptions to test each sprint, and work with the analysts in your team to plan moderated usability test sessions.",
-											"Design pixel perfect responsive UI’s and understand that adopting common interface patterns is better for UX than reinventing the wheel",
-											"Present your work to the wider business at Show & Tell sessions.",
-										].map((s, i) => (
-											<ListItem key={i}>{s}</ListItem>
+										{job.keyResponsibilities.map((s, i) => (
+											<ListItem key={i}>{s.value}</ListItem>
 										))}
 									</UnorderedList>
 								</Stack>
@@ -148,13 +145,8 @@ export default function JobDetails(props: InferGetServerSidePropsType<typeof get
 										Skill & Experience
 									</Heading>
 									<UnorderedList px={4} spacing={2} color={"gray.700"}>
-										{[
-											"You have at least 3 years’ experience working as a Product Designer.",
-											"You have experience using Sketch and InVision or Framer X",
-											"You have some previous experience working in an agile environment – Think two-week sprints.",
-											"You are familiar using Jira and Confluence in your workflow",
-										].map((s, i) => (
-											<ListItem key={i}>{s}</ListItem>
+										{job.skillAndExperience.map((s, i) => (
+											<ListItem key={i}>{s.value}</ListItem>
 										))}
 									</UnorderedList>
 								</Stack>
@@ -204,7 +196,7 @@ export default function JobDetails(props: InferGetServerSidePropsType<typeof get
 										<Icon color={"blue.500"} w={8} h={8} as={IconHourglass} strokeWidth={1.5} />
 										<Box>
 											<Text fontWeight={500}>Expiration date:</Text>
-											<Text color={"gray.600"}>April 06, 2021</Text>
+											<Text color={"gray.600"}>{job.expirationDate.toDateString()}</Text>
 										</Box>
 									</HStack>
 
@@ -212,15 +204,7 @@ export default function JobDetails(props: InferGetServerSidePropsType<typeof get
 										<Icon color={"blue.500"} w={8} h={8} as={IconMapPin} strokeWidth={1.5} />
 										<Box>
 											<Text fontWeight={500}>Location:</Text>
-											<Text color={"gray.600"}>London, UK</Text>
-										</Box>
-									</HStack>
-
-									<HStack align={"start"}>
-										<Icon color={"blue.500"} w={8} h={8} as={IconUser} strokeWidth={1.5} />
-										<Box>
-											<Text fontWeight={500}>Job Title:</Text>
-											<Text color={"gray.600"}>Designer</Text>
+											<Text color={"gray.600"}>{job.location}</Text>
 										</Box>
 									</HStack>
 
@@ -228,7 +212,7 @@ export default function JobDetails(props: InferGetServerSidePropsType<typeof get
 										<Icon color={"blue.500"} w={8} h={8} as={IconClock} strokeWidth={1.5} />
 										<Box>
 											<Text fontWeight={500}>Hours:</Text>
-											<Text color={"gray.600"}>50h / week</Text>
+											<Text color={"gray.600"}>{job.hours}h / week</Text>
 										</Box>
 									</HStack>
 
@@ -236,7 +220,7 @@ export default function JobDetails(props: InferGetServerSidePropsType<typeof get
 										<Icon color={"blue.500"} w={8} h={8} as={IconCash} strokeWidth={1.5} />
 										<Box>
 											<Text fontWeight={500}>Salary:</Text>
-											<Text color={"gray.600"}>₹35k - ₹45k</Text>
+											<Text color={"gray.600"}>₹{job.salary}</Text>
 										</Box>
 									</HStack>
 								</Stack>

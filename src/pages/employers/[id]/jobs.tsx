@@ -2,36 +2,54 @@ import type { GetServerSidePropsContext, InferGetServerSidePropsType } from "nex
 import Head from "next/head"
 
 import RootLayout from "@/layouts/root-layout"
-import { Box, Grid, GridItem, Heading, Stack } from "@chakra-ui/react"
+import { Box, Center, Grid, GridItem, HStack, Heading, Spinner, Stack, Text } from "@chakra-ui/react"
 import JobCard from "@/components/job-card"
+import { api } from "@/utils/api"
 
 // eslint-disable-next-line @typescript-eslint/require-await
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-	const id = context.query.id as string
+	const employerId = context.query.id as string
 
 	return {
-		props: { id },
+		props: { employerId },
 	}
 }
 
-export default function CompanyJobs(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function CompanyJobs({ employerId }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+	const { data: employer, isLoading: employerLoading } = api.employer.findById.useQuery(employerId)
+	const { data: jobs, isLoading: jobsLoading } = api.job.findByEmployerId.useQuery({
+		employerId,
+	})
+
+	if (!employer || employerLoading)
+		return (
+			<Center h={"100vh"}>
+				<Spinner />
+			</Center>
+		)
+
 	return (
 		<>
 			<Head>
-				<title>{`Jobs by ${props.id} | Jobby`}</title>
+				<title>{`Jobs by ${employer.companyName} | Jobby`}</title>
 			</Head>
 
 			<RootLayout>
 				<Stack spacing={6}>
-					<Heading>Jobs by {props.id}</Heading>
+					<HStack>
+						<Heading>Jobs by {employer.companyName}</Heading>
+						{jobs && <Text fontSize={"xl"} fontWeight={600}>{`(${jobs.length} jobs open)`}</Text>}
+					</HStack>
 
-					<Grid templateColumns={{ md: "repeat(3, 1fr)" }} gap={8}>
-						{Array.from({ length: 10 }, () => 0).map((_, i) => (
-							<GridItem key={i}>
-								<JobCard />
-							</GridItem>
-						))}
-					</Grid>
+					{jobs && (
+						<Grid templateColumns={{ md: "repeat(3, 1fr)" }} gap={8}>
+							{jobs.map((job) => (
+								<GridItem key={job.id}>
+									<JobCard jobId={job.id} />
+								</GridItem>
+							))}
+						</Grid>
+					)}
 				</Stack>
 			</RootLayout>
 		</>

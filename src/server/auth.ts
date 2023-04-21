@@ -1,13 +1,11 @@
 import { type GetServerSidePropsContext } from "next"
 import { getServerSession, type NextAuthOptions, type DefaultSession } from "next-auth"
-import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
-import { env } from "@/env.mjs"
 import { prisma } from "@/server/db"
 import { logInSchema } from "@/utils/schema/auth"
 import { verify } from "argon2"
-import { type User } from "@prisma/client"
+import { type UserRole, type User } from "@prisma/client"
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -20,14 +18,14 @@ declare module "next-auth" {
 		user: {
 			id: string
 			// ...other properties
-			// role: UserRole;
+			role: UserRole
 		} & DefaultSession["user"]
 	}
 
-	// interface User {
-	//   // ...other properties
-	//   // role: UserRole;
-	// }
+	interface User {
+		// ...other properties
+		role: UserRole
+	}
 }
 
 /**
@@ -76,16 +74,12 @@ export const authOptions: NextAuthOptions = {
 						name: user.name,
 						firstName: user.firstName,
 						lastName: user.lastName,
+						role: user.role,
 					}
 				} catch (error) {
 					return null
 				}
 			},
-		}),
-
-		GoogleProvider({
-			clientId: env.GOOGLE_CLIENT_ID,
-			clientSecret: env.GOOGLE_CLIENT_SECRET,
 		}),
 	],
 
@@ -100,6 +94,7 @@ export const authOptions: NextAuthOptions = {
 			if (user) {
 				token.id = user.id
 				token.email = user.email
+				token.role = user.role
 				// token.firstName = user.firstName
 				// token.lastName = user.lastName
 			}
@@ -110,7 +105,7 @@ export const authOptions: NextAuthOptions = {
 				session.user.id = token.id as User["id"]
 				// session.user.firstName = token.firstName
 				// session.user.lastName = token.lastName
-				// session.user.role = user.role; <-- put other properties on the session here
+				session.user.role = token.role as UserRole
 			}
 			return session
 		},

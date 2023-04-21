@@ -7,26 +7,6 @@ generator client {
     provider = "prisma-client-js"
 }
 
-model Account {
-    id                String  @id @default(auto()) @map("_id") @db.ObjectId
-    userId            String  @db.ObjectId
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String? @db.String
-    access_token      String? @db.String
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String? @db.String
-    session_state     String?
-
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    @@unique([provider, providerAccountId])
-    @@map("accounts")
-}
-
 model User {
     id            String    @id @default(auto()) @map("_id") @db.ObjectId
     name          String?
@@ -38,13 +18,11 @@ model User {
     lastName        String?
     password        String?
     passwordEnabled Boolean  @default(false)
-    role            UserRole @default(USER)
-    isEmployer      Boolean  @default(false)
+    role            UserRole @default(CANDIDATE)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    accounts  Account[]
     candidate Candidate?
     employer  Employer?
 
@@ -52,8 +30,8 @@ model User {
 }
 
 enum UserRole {
-    USER
-    ADMIN
+    EMPLOYER
+    CANDIDATE
 }
 
 // model VerificationToken {
@@ -146,6 +124,7 @@ model JobPosting {
     description         String
     keyResponsibilities Field[]
     skillAndExperience  Field[]
+    // categories          String[]
     location            String
     hours               String
     salary              String

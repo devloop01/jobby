@@ -96,7 +96,7 @@ export const userRouter = createTRPCRouter({
 					email,
 					password: hashedPassword,
 					passwordEnabled: true,
-					isEmployer: true,
+					role: "EMPLOYER",
 				},
 			})
 

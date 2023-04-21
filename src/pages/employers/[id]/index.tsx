@@ -1,6 +1,20 @@
 import JobCard from "@/components/job-card"
 import RootLayout from "@/layouts/root-layout"
-import { Box, Button, Center, Flex, Grid, GridItem, HStack, Heading, Icon, Stack, Text } from "@chakra-ui/react"
+import { api } from "@/utils/api"
+import {
+	Box,
+	Button,
+	Center,
+	Flex,
+	Grid,
+	GridItem,
+	HStack,
+	Heading,
+	Icon,
+	Spinner,
+	Stack,
+	Text,
+} from "@chakra-ui/react"
 import {
 	IconBrandFacebookFilled,
 	IconBrandInstagram,
@@ -14,18 +28,31 @@ import NextLink from "next/link"
 
 // eslint-disable-next-line @typescript-eslint/require-await
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-	const id = context.query.id as string
+	const employerId = context.query.id as string
 
 	return {
-		props: { id },
+		props: { employerId },
 	}
 }
 
-export default function JobDetails(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function JobDetails({ employerId }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+	const { data: employer, isLoading: employerLoading } = api.employer.findById.useQuery(employerId)
+	const { data: jobs, isLoading: jobsLoading } = api.job.findByEmployerId.useQuery({
+		employerId,
+		limit: 3,
+	})
+
+	if (!employer || employerLoading)
+		return (
+			<Center h={"100vh"}>
+				<Spinner />
+			</Center>
+		)
+
 	return (
 		<>
 			<Head>
-				<title>{`${props.id} | Jobby`}</title>
+				<title>{`${employer.companyName} | Jobby`}</title>
 			</Head>
 
 			<RootLayout>
@@ -149,24 +176,32 @@ export default function JobDetails(props: InferGetServerSidePropsType<typeof get
 										12 other jobs available
 									</Heading>
 
-									<Stack spacing={6}>
-										<JobCard />
-										<JobCard />
-										<JobCard />
-										<Flex>
-											<Button
-												variant={"outline"}
-												colorScheme="blue"
-												as={NextLink}
-												href={{
-													pathname: "/employers/[employerId]/jobs",
-													query: { employerId: "random-id" },
-												}}
-											>
-												Show more
-											</Button>
-										</Flex>
-									</Stack>
+									{jobsLoading && (
+										<Center h={"200px"}>
+											<Spinner />
+										</Center>
+									)}
+
+									{jobs && (
+										<Stack spacing={6}>
+											{jobs.map((job) => (
+												<JobCard key={job.id} jobId={job.id} />
+											))}
+											<Flex>
+												<Button
+													variant={"outline"}
+													colorScheme="blue"
+													as={NextLink}
+													href={{
+														pathname: "/employers/[employerId]/jobs",
+														query: { employerId: employer.id },
+													}}
+												>
+													Show more
+												</Button>
+											</Flex>
+										</Stack>
+									)}
 								</Stack>
 							</Stack>
 						</GridItem>

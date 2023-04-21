@@ -1,28 +1,38 @@
 import JobCard from "@/components/job-card"
+import SearchForm from "@/components/search-form"
 import RootLayout from "@/layouts/root-layout"
 import { api } from "@/utils/api"
 import {
-	Box,
+	Alert,
+	AlertTitle,
 	Button,
-	Card,
-	CardBody,
+	Center,
 	Flex,
 	Grid,
 	GridItem,
 	Heading,
-	Icon,
-	Input,
-	InputGroup,
-	InputLeftElement,
 	Select,
-	SelectField,
+	Spinner,
 	Stack,
 } from "@chakra-ui/react"
-import { IconBriefcase, IconMapPin, IconSearch } from "@tabler/icons-react"
 import Head from "next/head"
+import Link from "next/link"
+import { useRouter } from "next/router"
+import { useState } from "react"
 
 export default function Jobs() {
-	const { data: jobs } = api.job.find.useQuery()
+	const router = useRouter()
+
+	const searchText = router.query.searchText as string | undefined
+
+	const {
+		data: jobs,
+		isLoading: jobsLoading,
+		error: jobsError,
+		refetch: refetchJobs,
+	} = api.job.find.useQuery({
+		jobTitle: searchText,
+	})
 
 	return (
 		<>
@@ -31,51 +41,18 @@ export default function Jobs() {
 			</Head>
 
 			<RootLayout>
-				<Stack spacing={6} textAlign={"center"} bg={"blue.500"}>
+				<Stack spacing={6} textAlign={"center"} bg={"blue.500"} py={20}>
 					<Heading color={"white"} fontSize={"4xl"}>
 						Find perfect jobs for yourself
 					</Heading>
 					<Flex align={"center"} justify={"center"} px={{ base: 0, md: 10 }}>
-						<Card borderRadius={"lg"} border={"1px"} borderColor={"gray.300"} boxShadow={"lg"} w="full">
-							<CardBody p={8}>
-								<Grid templateColumns={{ md: "repeat(12, 1fr)" }} gap={6}>
-									<GridItem colSpan={4}>
-										<InputGroup>
-											<InputLeftElement>
-												<Icon as={IconSearch} color={"gray.500"} />
-											</InputLeftElement>
-											<Input variant={"flushed"} placeholder="Job title, keywords or company" />
-										</InputGroup>
-									</GridItem>
-
-									<GridItem colSpan={2}>
-										<InputGroup>
-											<InputLeftElement>
-												<Icon as={IconMapPin} color={"gray.500"} />
-											</InputLeftElement>
-											<Input variant={"flushed"} placeholder="City or pincode" />
-										</InputGroup>
-									</GridItem>
-
-									<GridItem colSpan={4}>
-										<InputGroup>
-											<InputLeftElement>
-												<Icon as={IconBriefcase} color={"gray.500"} />
-											</InputLeftElement>
-											<Select placeholder="Choose a category" variant={"flushed"} pl={10}>
-												<option value="freelance">freelance</option>
-											</Select>
-										</InputGroup>
-									</GridItem>
-
-									<GridItem colSpan={2}>
-										<Button w="full" size={"lg"} colorScheme="brand" fontSize={"md"}>
-											Find Jobs
-										</Button>
-									</GridItem>
-								</Grid>
-							</CardBody>
-						</Card>
+						<SearchForm
+							onSearchPress={({ jobTitle }) => {
+								router.query.searchText = encodeURI(jobTitle)
+								void router.push(router)
+								void refetchJobs()
+							}}
+						/>
 					</Flex>
 				</Stack>
 
@@ -98,13 +75,40 @@ export default function Jobs() {
 						</Stack>
 					</Flex>
 
-					<Grid templateColumns={{ md: "repeat(3, 1fr)" }} gap={8}>
-						{jobs?.map((job) => (
-							<GridItem key={job.id}>
-								<JobCard job={job} />
-							</GridItem>
-						))}
-					</Grid>
+					{jobsError && (
+						<Alert>
+							<AlertTitle>{jobsError.message}</AlertTitle>
+						</Alert>
+					)}
+
+					{jobsLoading && (
+						<Center>
+							<Spinner />
+						</Center>
+					)}
+
+					{jobs && (
+						<>
+							{jobs.length === 0 && (
+								<Center>
+									<Stack>
+										<Heading>Nothing Found!</Heading>
+										<Button as={Link} href={"/jobs"}>
+											Clear search
+										</Button>
+									</Stack>
+								</Center>
+							)}
+
+							<Grid templateColumns={{ md: "repeat(3, 1fr)" }} gap={8}>
+								{jobs.map((job) => (
+									<GridItem key={job.id}>
+										<JobCard jobId={job.id} />
+									</GridItem>
+								))}
+							</Grid>
+						</>
+					)}
 				</Stack>
 			</RootLayout>
 		</>

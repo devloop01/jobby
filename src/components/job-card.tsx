@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Box, Heading, Text, Img, Flex, HStack, Card, IconButton, Icon, Stack, Badge } from "@chakra-ui/react"
+import { Box, Heading, Text, Img, Flex, HStack, Card, IconButton, Icon, Stack, Badge, Skeleton } from "@chakra-ui/react"
 import {
 	IconArrowUpRight,
 	IconHeartFilled,
@@ -15,13 +15,28 @@ import {
 import Image from "next/image"
 import Link from "next/link"
 import { type JobPosting } from "@prisma/client"
+import { api } from "@/utils/api"
+import { formatDistance } from "date-fns"
 
 interface JobCardProps {
-	job: JobPosting
+	jobId: string
 }
 
-export function JobCard({ job }: JobCardProps) {
+export function JobCard({ jobId }: JobCardProps) {
+	const { data: job, isLoading: jobLoading } = api.job.findById.useQuery(jobId)
+
+	const employerId = job?.employerId
+
+	const { data: employer, isLoading: employerLoading } = api.employer.findById.useQuery(employerId!, {
+		enabled: !!employerId,
+	})
+
 	const [liked, setLiked] = useState(false)
+
+	if (!job || jobLoading || !employer || employerLoading) return <Skeleton h={"200px"} />
+
+	const currentDate = new Date()
+	const jobPostedAgo = formatDistance(currentDate, job.createdAt)
 
 	return (
 		<Card
@@ -47,11 +62,11 @@ export function JobCard({ job }: JobCardProps) {
 							<Link
 								href={{
 									pathname: "/employers/[employerId]",
-									query: { employerId: "random-id" },
+									query: { employerId: employer.id },
 								}}
 							>
 								<Text fontSize={"lg"} fontWeight={600} _hover={{ color: "blue.600" }}>
-									Google
+									{employer.companyName}
 								</Text>
 							</Link>
 
@@ -68,7 +83,7 @@ export function JobCard({ job }: JobCardProps) {
 					<Link
 						href={{
 							pathname: "/jobs/[jobId]",
-							query: { jobId: "random-id" },
+							query: { jobId: job.id },
 						}}
 					>
 						<Heading fontSize={"2xl"} _hover={{ color: "blue.600" }}>
@@ -84,7 +99,7 @@ export function JobCard({ job }: JobCardProps) {
 
 						<HStack>
 							<Icon as={IconClock} />
-							<Text>11 hours ago</Text>
+							<Text>{jobPostedAgo}</Text>
 						</HStack>
 					</HStack>
 				</Stack>

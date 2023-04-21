@@ -108,7 +108,7 @@ export const SignInForm = () => {
 				</Stack>
 			</Stack>
 
-			<Flex align={"center"} my={"6"}>
+			{/* <Flex align={"center"} my={"6"}>
 				<Divider borderColor={"gray.300"} />
 				<Text fontSize={"sm"} px={"2"}>
 					OR
@@ -126,7 +126,7 @@ export const SignInForm = () => {
 				>
 					Continue with Google
 				</Button>
-			</Stack>
+			</Stack> */}
 		</Box>
 	)
 }

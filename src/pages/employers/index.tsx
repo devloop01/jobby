@@ -1,9 +1,12 @@
 import EmployerCard from "@/components/employer-card"
 import RootLayout from "@/layouts/root-layout"
+import { api } from "@/utils/api"
 import { Box, Divider, Flex, Grid, GridItem, Heading, Select, Stack, Text } from "@chakra-ui/react"
 import Head from "next/head"
 
 export default function Employers() {
+	const { data: employers } = api.employer.find.useQuery()
+
 	return (
 		<>
 			<Head>
@@ -39,20 +42,15 @@ export default function Employers() {
 						</Stack>
 					</Flex>
 
-					<Grid templateColumns={{ md: "repeat(4, 1fr)" }} gap={4}>
-						<GridItem>
-							<EmployerCard />
-						</GridItem>
-						<GridItem>
-							<EmployerCard />
-						</GridItem>
-						<GridItem>
-							<EmployerCard />
-						</GridItem>
-						<GridItem>
-							<EmployerCard />
-						</GridItem>
-					</Grid>
+					{employers && (
+						<Grid templateColumns={{ md: "repeat(4, 1fr)" }} gap={4}>
+							{employers.map((employer) => (
+								<GridItem key={employer.id}>
+									<EmployerCard employerId={employer.id} />
+								</GridItem>
+							))}
+						</Grid>
+					)}
 				</Stack>
 			</RootLayout>
 		</>
