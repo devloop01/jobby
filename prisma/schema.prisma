@@ -59,8 +59,12 @@ model Candidate {
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     candidateProfile CandidateProfile?
-    likedJobIds      String[]          @db.ObjectId
-    likedJobs        JobPosting[]      @relation(fields: [likedJobIds], references: [id])
+
+    likedJobIds String[]     @db.ObjectId
+    likedJobs   JobPosting[] @relation("LikedJob", fields: [likedJobIds], references: [id])
+
+    appliedJobIds String[]     @db.ObjectId
+    appliedJobs   JobPosting[] @relation("AppliedJob", fields: [appliedJobIds], references: [id])
 
     @@map("candidates")
 }
@@ -87,20 +91,26 @@ model Employer {
     @@map("employers")
 }
 
+type Skill {
+    label String
+    value String
+}
+
 model CandidateProfile {
-    id                String   @id @default(auto()) @map("_id") @db.ObjectId
-    candidateId       String   @unique @db.ObjectId
+    id                String  @id @default(auto()) @map("_id") @db.ObjectId
+    candidateId       String  @unique @db.ObjectId
     fullName          String
     jobTitle          String?
     phone             String?
-    email             String   @unique
+    email             String  @unique
     website           String?
     experienceInYears String?
     age               String?
-    skills            String[]
-    showInListings    Boolean  @default(true)
+    skills            Skill[]
+    showInListings    Boolean @default(true)
     bio               String?
     image             String?
+    isComplete        Boolean @default(false)
 
     candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
 
@@ -121,7 +131,7 @@ type Field {
 }
 
 model JobPosting {
-    id                  String      @id @default(auto()) @map("_id") @db.ObjectId
+    id                  String   @id @default(auto()) @map("_id") @db.ObjectId
     title               String
     description         String
     keyResponsibilities Field[]
@@ -131,12 +141,17 @@ model JobPosting {
     hours               String
     salary              String
     expirationDate      DateTime
-    createdAt           DateTime    @default(now())
-    updatedAt           DateTime    @updatedAt
-    employer            Employer    @relation(fields: [employerId], references: [id], onDelete: Cascade)
-    employerId          String      @db.ObjectId
-    likedBy             Candidate[] @relation(fields: [likedByIds], references: [id])
-    likedByIds          String[]    @db.ObjectId
+    createdAt           DateTime @default(now())
+    updatedAt           DateTime @updatedAt
+
+    employer   Employer @relation(fields: [employerId], references: [id], onDelete: Cascade)
+    employerId String   @db.ObjectId
+
+    likedBy    Candidate[] @relation("LikedJob", fields: [likedByIds], references: [id])
+    likedByIds String[]    @db.ObjectId
+
+    appliedBy    Candidate[] @relation("AppliedJob", fields: [appliedByIds], references: [id])
+    appliedByIds String[]    @db.ObjectId
 
     @@map("job_postings")
 }

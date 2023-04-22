@@ -29,8 +29,6 @@ export function JobCard({ jobId }: JobCardProps) {
 
 	const employerId = job?.employerId
 
-	console.log(employerId)
-
 	const { data: employer, isLoading: employerLoading } = api.employer.findById.useQuery(employerId!, {
 		enabled: !!employerId,
 	})

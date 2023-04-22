@@ -62,7 +62,7 @@ export default function JobDetails({ employerId }: InferGetServerSidePropsType<t
 							<Stack textAlign={"center"}>
 								<Image src={"/google.svg"} height={120} width={120} alt={"Company Avatar"} />
 								<Text fontSize={"3xl"} fontWeight={600}>
-									Google
+									{employer.companyName}
 								</Text>
 							</Stack>
 						</Center>
@@ -81,27 +81,27 @@ export default function JobDetails({ employerId }: InferGetServerSidePropsType<t
 								<Stack px={4} spacing={4}>
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Company Size:</Text>
-										<Text color={"gray.600"}>501-1,000</Text>
+										<Text color={"gray.600"}>{employer.companySize}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Founded In:</Text>
-										<Text color={"gray.600"}>2011</Text>
+										<Text color={"gray.600"}>{employer.companyFoundedYear}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Phone:</Text>
-										<Text color={"gray.600"}>123 456 7890</Text>
+										<Text color={"gray.600"}>{employer.companyPhone}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Email:</Text>
-										<Text color={"gray.600"}>info@joio.com</Text>
+										<Text color={"gray.600"}>{employer.companyEmail}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Location:</Text>
-										<Text color={"gray.600"}>London, UK</Text>
+										<Text color={"gray.600"}>{employer.companyAddress}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
@@ -127,62 +127,28 @@ export default function JobDetails({ employerId }: InferGetServerSidePropsType<t
 
 						<GridItem colSpan={8}>
 							<Stack spacing={8}>
-								<Stack>
-									<Heading as="h3" fontSize={"2xl"}>
-										About Company
-									</Heading>
+								{employer.companyDescription?.length !== 0 && (
+									<Stack>
+										<Heading as="h3" fontSize={"3xl"}>
+											About Company
+										</Heading>
 
-									<Stack color={"gray.700"} spacing={6}>
-										<Text>
-											Moody’s Corporation, often referred to as Moody’s, is an American business
-											and financial services company. It is the holding company for Moody’s
-											Investors Service (MIS), an American credit rating agency, and Moody’s
-											Analytics (MA), an American provider of financial analysis software and
-											services.
-										</Text>
-
-										<Text>
-											Moody’s was founded by John Moody in 1909 to produce manuals of statistics
-											related to stocks and bonds and bond ratings. Moody’s was acquired by Dun &
-											Bradstreet in 1962. In 2000, Dun & Bradstreet spun off Moody’s Corporation
-											as a separate company that was listed on the NYSE under MCO. In 2007,
-											Moody’s Corporation was split into two operating divisions, Moody’s
-											Investors Service, the rating agency, and Moody’s Analytics, with all of its
-											other products.
-										</Text>
-
-										<Text>
-											Moody’s Corporation, often referred to as Moody’s, is an American business
-											and financial services company. It is the holding company for Moody’s
-											Investors Service (MIS), an American credit rating agency, and Moody’s
-											Analytics (MA), an American provider of financial analysis software and
-											services.
-										</Text>
-
-										<Text>
-											Moody’s was founded by John Moody in 1909 to produce manuals of statistics
-											related to stocks and bonds and bond ratings. Moody’s was acquired by Dun &
-											Bradstreet in 1962. In 2000, Dun & Bradstreet spun off Moody’s Corporation
-											as a separate company that was listed on the NYSE under MCO. In 2007,
-											Moody’s Corporation was split into two operating divisions, Moody’s
-											Investors Service, the rating agency, and Moody’s Analytics, with all of its
-											other products.
-										</Text>
+										<Text color={"gray.700"}>{employer.companyDescription}</Text>
 									</Stack>
-								</Stack>
+								)}
 
-								<Stack>
-									<Heading as="h3" fontSize={"2xl"}>
-										12 other jobs available
-									</Heading>
+								{jobs && (
+									<Stack spacing={6}>
+										<Text fontSize={"2xl"} fontWeight={700}>
+											{jobs.length} other jobs available
+										</Text>
 
-									{jobsLoading && (
-										<Center h={"200px"}>
-											<Spinner />
-										</Center>
-									)}
+										{jobsLoading && (
+											<Center h={"200px"}>
+												<Spinner />
+											</Center>
+										)}
 
-									{jobs && (
 										<Stack spacing={6}>
 											{jobs.map((job) => (
 												<JobCard key={job.id} jobId={job.id} />
@@ -201,8 +167,8 @@ export default function JobDetails({ employerId }: InferGetServerSidePropsType<t
 												</Button>
 											</Flex>
 										</Stack>
-									)}
-								</Stack>
+									</Stack>
+								)}
 							</Stack>
 						</GridItem>
 					</Grid>

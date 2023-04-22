@@ -1,6 +1,7 @@
 import { candidateProfileSchema } from "@/utils/schema/candidate"
 import { createTRPCRouter, protectedProcedure } from "../trpc"
 import { z } from "zod"
+import { TRPCClientError } from "@trpc/client"
 
 /**
  * User Routers
@@ -31,14 +32,37 @@ export const candidateRouter = createTRPCRouter({
 
 	updateProfile: protectedProcedure
 		.input(z.object({ id: z.string() }).merge(candidateProfileSchema))
-		.mutation(async ({ ctx, input: { id, skills, ...profileData } }) => {
+		.mutation(async ({ ctx, input: { id, ...profileData } }) => {
 			const updatedProfile = await ctx.prisma.candidateProfile.update({
 				where: { id },
 				data: {
 					...profileData,
-					skills: skills.map((skill) => skill.value),
+				},
+				select: {
+					fullName: true,
+					jobTitle: true,
+					phone: true,
+					email: true,
+					website: true,
+					experienceInYears: true,
+					age: true,
+					skills: true,
+					showInListings: true,
+					bio: true,
 				},
 			})
+
+			const parsedProfile = candidateProfileSchema.safeParse(updatedProfile)
+
+			if (parsedProfile.success)
+				await ctx.prisma.candidateProfile.update({
+					where: {
+						id,
+					},
+					data: {
+						isComplete: true,
+					},
+				})
 
 			return updatedProfile
 		}),
@@ -73,42 +97,16 @@ export const candidateRouter = createTRPCRouter({
 		})
 	}),
 
-	likeJob: protectedProcedure.input(z.string()).mutation(async ({ ctx, input }) => {
-		const job = await ctx.prisma.jobPosting.findFirstOrThrow({
-			where: { id: input },
-		})
-
+	findAllAppliedJobs: protectedProcedure.query(async ({ ctx }) => {
 		const candidate = await ctx.prisma.candidate.findFirstOrThrow({
 			where: { userId: ctx.session.user.id },
 		})
 
-		return await ctx.prisma.candidate.update({
-			where: { id: candidate.id },
-			data: {
-				likedJobs: {
-					connect: {
-						id: job.id,
-					},
-				},
-			},
-		})
-	}),
-
-	unlikeJob: protectedProcedure.input(z.string()).mutation(async ({ ctx, input }) => {
-		const job = await ctx.prisma.jobPosting.findFirstOrThrow({
-			where: { id: input },
-		})
-
-		const candidate = await ctx.prisma.candidate.findFirstOrThrow({
-			where: { userId: ctx.session.user.id },
-		})
-
-		return await ctx.prisma.candidate.update({
-			where: { id: candidate.id },
-			data: {
-				likedJobs: {
-					disconnect: {
-						id: job.id,
+		return await ctx.prisma.jobPosting.findMany({
+			where: {
+				appliedBy: {
+					some: {
+						id: candidate.id,
 					},
 				},
 			},
@@ -128,15 +126,62 @@ export const candidateRouter = createTRPCRouter({
 
 		const connectOrDisconnect = isLiked ? "disconnect" : "connect"
 
-		return await ctx.prisma.candidate.update({
-			where: { id: candidate.id },
-			data: {
-				likedJobs: {
-					[connectOrDisconnect]: {
-						id: job.id,
+		try {
+			return await ctx.prisma.candidate.update({
+				where: { userId: ctx.session.user.id },
+				data: {
+					likedJobs: {
+						[connectOrDisconnect]: {
+							id: job.id,
+						},
 					},
 				},
-			},
-		})
+			})
+		} catch (error) {
+			throw new Error("Cannot update candidate")
+		}
 	}),
+
+	applyJob: protectedProcedure
+		.input(
+			z.object({
+				jobId: z.string(),
+			})
+		)
+		.mutation(async ({ ctx, input }) => {
+			const job = await ctx.prisma.jobPosting.findUniqueOrThrow({
+				where: {
+					id: input.jobId,
+				},
+			})
+
+			const candidate = await ctx.prisma.candidate.findUniqueOrThrow({
+				where: {
+					userId: ctx.session.user.id,
+				},
+			})
+
+			const candidateProfile = await ctx.prisma.candidateProfile.findUniqueOrThrow({
+				where: {
+					candidateId: candidate.id,
+				},
+			})
+
+			const profileIsCompleted = candidateProfile.isComplete
+
+			if (!profileIsCompleted) throw new TRPCClientError("candidate profile is not complete!")
+
+			await ctx.prisma.candidate.update({
+				where: {
+					userId: ctx.session.user.id,
+				},
+				data: {
+					appliedJobs: {
+						connect: {
+							id: job.id,
+						},
+					},
+				},
+			})
+		}),
 })

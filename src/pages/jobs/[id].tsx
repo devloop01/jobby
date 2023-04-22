@@ -1,5 +1,6 @@
 import { IconGoogle } from "@/components/icons"
 import RootLayout from "@/layouts/root-layout"
+import { getServerAuthSession } from "@/server/auth"
 import { api } from "@/utils/api"
 import {
 	Box,
@@ -18,6 +19,7 @@ import {
 	Stack,
 	Text,
 	UnorderedList,
+	useToast,
 } from "@chakra-ui/react"
 import {
 	IconBrandFacebook,
@@ -33,6 +35,7 @@ import {
 } from "@tabler/icons-react"
 import { IconBookmark, IconBriefcase, IconCalendar, IconClock } from "@tabler/icons-react"
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
+import { useSession } from "next-auth/react"
 import Head from "next/head"
 import Image from "next/image"
 import NextLink from "next/link"
@@ -47,13 +50,87 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 }
 
 export default function JobDetails({ jobId }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+	const toast = useToast()
+	const { data: session } = useSession()
+
+	const isCandidate = session?.user.role === "CANDIDATE"
+
 	const { data: job, isLoading: jobLoading } = api.job.findById.useQuery(jobId)
+
+	const apiContext = api.useContext()
+
+	const { data: candidate } = api.candidate.current.useQuery(undefined, {
+		enabled: isCandidate,
+	})
 
 	const employerId = job?.employerId
 
 	const { data: employer, isLoading: employerLoading } = api.employer.findById.useQuery(employerId!, {
 		enabled: !!employerId,
 	})
+
+	const { mutate: applyJob, isLoading: applyingJob } = api.candidate.applyJob.useMutation({
+		onSuccess: () => {
+			toast({
+				status: "success",
+				title: "Applied for job",
+				duration: 5000,
+				isClosable: true,
+			})
+			void apiContext.job.findById.invalidate()
+		},
+		onError: (error) => {
+			toast({
+				status: "error",
+				title: "Failed to apply for job!",
+				description: error.message,
+				duration: 5000,
+				isClosable: true,
+			})
+		},
+	})
+
+	const jobIsLiked = job?.likedByIds.some((id) => id === candidate?.id)
+	const jobIsApplied = job?.appliedByIds.some((id) => id === candidate?.id)
+
+	const { mutate: toggleLikeJob, isLoading: togglingLikeJob } = api.candidate.toggleLikeJob.useMutation({
+		onSuccess: () => {
+			if (jobIsLiked) {
+				toast({
+					status: "warning",
+					title: "Job unsaved",
+					duration: 3000,
+					isClosable: true,
+				})
+			} else {
+				toast({
+					status: "success",
+					title: "Job Saved",
+					duration: 3000,
+					isClosable: true,
+				})
+			}
+			void apiContext.job.findById.invalidate()
+			void apiContext.candidate.findAllLikedJobs.invalidate()
+		},
+		onError: () => {
+			toast({
+				status: "error",
+				title: "Cannot Save Job",
+				description: "Jobs can only be saved by a candidate!",
+				duration: 4000,
+				isClosable: true,
+			})
+		},
+	})
+
+	const onJobApplyClick = () => {
+		if (job) {
+			applyJob({
+				jobId: job.id,
+			})
+		}
+	}
 
 	if (!job || jobLoading || !employer || employerLoading)
 		return (
@@ -101,19 +178,38 @@ export default function JobDetails({ jobId }: InferGetServerSidePropsType<typeof
 								</Box>
 							</Box>
 
-							<HStack>
-								<Button size={"lg"} colorScheme="brand" fontSize={"md"}>
-									Apply For Job
-								</Button>
+							{jobIsApplied ? (
+								<HStack>
+									<Button size={"lg"} colorScheme="brand" fontSize={"md"} isDisabled>
+										Applied
+									</Button>
+								</HStack>
+							) : (
+								<HStack>
+									<Button
+										size={"lg"}
+										colorScheme="brand"
+										fontSize={"md"}
+										onClick={onJobApplyClick}
+										isLoading={applyingJob}
+									>
+										Apply For Job
+									</Button>
 
-								<IconButton
-									aria-label="Bookmark Job"
-									size={"lg"}
-									colorScheme="brand"
-									variant="outline"
-									icon={<Icon as={IconBookmark} />}
-								/>
-							</HStack>
+									<IconButton
+										aria-label="Bookmark Job"
+										size={"lg"}
+										colorScheme="brand"
+										icon={<Icon as={IconBookmark} />}
+										variant={jobIsLiked ? "solid" : "outline"}
+										onClick={() => {
+											if (!isCandidate) return
+											toggleLikeJob(job.id)
+										}}
+										isLoading={togglingLikeJob}
+									/>
+								</HStack>
+							)}
 						</Flex>
 					</Stack>
 
@@ -188,7 +284,7 @@ export default function JobDetails({ jobId }: InferGetServerSidePropsType<typeof
 										<Icon color={"blue.500"} w={8} h={8} as={IconCalendar} strokeWidth={1.5} />
 										<Box>
 											<Text fontWeight={500}>Date Posted:</Text>
-											<Text color={"gray.600"}>Posted 1 hours ago</Text>
+											<Text color={"gray.600"}>{job.createdAt.toDateString()}</Text>
 										</Box>
 									</HStack>
 
@@ -246,7 +342,7 @@ export default function JobDetails({ jobId }: InferGetServerSidePropsType<typeof
 											href={{
 												pathname: "/employers/[employerId]",
 												query: {
-													employerId: "random-id",
+													employerId: employer.id,
 												},
 											}}
 											fontSize={"sm"}
@@ -267,27 +363,27 @@ export default function JobDetails({ jobId }: InferGetServerSidePropsType<typeof
 								<Stack px={4} spacing={4}>
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Company Size:</Text>
-										<Text color={"gray.600"}>501-1,000</Text>
+										<Text color={"gray.600"}>{employer.companySize}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Founded In:</Text>
-										<Text color={"gray.600"}>2011</Text>
+										<Text color={"gray.600"}>{employer.companyFoundedYear}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Phone:</Text>
-										<Text color={"gray.600"}>123 456 7890</Text>
+										<Text color={"gray.600"}>{employer.companyPhone}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Email:</Text>
-										<Text color={"gray.600"}>info@joio.com</Text>
+										<Text color={"gray.600"}>{employer.companyEmail}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Location:</Text>
-										<Text color={"gray.600"}>London, UK</Text>
+										<Text color={"gray.600"}>{employer.companyAddress}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>

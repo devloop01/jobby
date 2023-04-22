@@ -3,39 +3,9 @@ import Head from "next/head"
 import { withAuth } from "@/utils"
 
 import RootLayout from "@/layouts/root-layout"
-import {
-	Box,
-	Button,
-	Card,
-	CardBody,
-	CardHeader,
-	Divider,
-	Flex,
-	FormControl,
-	FormErrorMessage,
-	FormLabel,
-	Grid,
-	GridItem,
-	Heading,
-	Icon,
-	Image,
-	Input,
-	InputGroup,
-	InputRightElement,
-	Stack,
-	StackDivider,
-	Tag,
-	TagCloseButton,
-	TagLabel,
-	Text,
-	Textarea,
-	useBreakpointValue,
-} from "@chakra-ui/react"
+import { Box, Button, Heading, Stack, Text } from "@chakra-ui/react"
 import { type InferGetServerSidePropsType } from "next"
 import ProfileLayout from "@/layouts/profile-layout"
-import { IconSearch } from "@tabler/icons-react"
-import { CreatableSelect } from "chakra-react-select"
-import { useState } from "react"
 import { api } from "@/utils/api"
 import JobCard from "@/components/job-card"
 import Link from "next/link"

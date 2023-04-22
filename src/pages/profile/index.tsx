@@ -96,7 +96,7 @@ function ProfileForm() {
 					website: data.website ?? "",
 					experienceInYears: data.experienceInYears ?? "",
 					age: data.age ?? "",
-					skills: data.skills.map((v) => ({ label: v, value: v })),
+					skills: data.skills,
 					bio: data.bio ?? "",
 					showInListings: data.showInListings,
 				})
@@ -104,7 +104,7 @@ function ProfileForm() {
 		},
 	})
 
-	const { mutate: updateProfile } = api.candidate.updateProfile.useMutation({
+	const { mutate: updateProfile, isLoading: updateingProfile } = api.candidate.updateProfile.useMutation({
 		onSuccess: () => {
 			toast({
 				title: "Profile Updated",
@@ -304,7 +304,7 @@ function ProfileForm() {
 						colorScheme="brand"
 						fontSize={"md"}
 						isDisabled={!isDirty || profileLoading}
-						// isLoading={updatingCandidateProfile}
+						isLoading={updateingProfile}
 					>
 						Save
 					</Button>
