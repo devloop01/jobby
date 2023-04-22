@@ -1,37 +1,70 @@
 import { useState } from "react"
-import { Box, Heading, Text, Img, Flex, HStack, Card, IconButton, Icon, Stack, Badge, Skeleton } from "@chakra-ui/react"
-import {
-	IconArrowUpRight,
-	IconHeartFilled,
-	IconHeart,
-	IconBookmark,
-	IconBriefcase,
-	IconMapPin,
-	IconClock,
-	IconCash,
-	IconMoneybag,
-	IconCoinRupee,
-} from "@tabler/icons-react"
+import { Heading, Text, HStack, Card, IconButton, Icon, Stack, Badge, Skeleton, useToast } from "@chakra-ui/react"
+import { IconBookmark, IconMapPin, IconClock, IconCoinRupee } from "@tabler/icons-react"
 import Image from "next/image"
 import Link from "next/link"
-import { type JobPosting } from "@prisma/client"
 import { api } from "@/utils/api"
 import { formatDistance } from "date-fns"
+import { useSession } from "next-auth/react"
 
 interface JobCardProps {
 	jobId: string
 }
 
 export function JobCard({ jobId }: JobCardProps) {
+	const toast = useToast()
+	const { data: session } = useSession()
+
+	const isCandidate = session?.user.role === "CANDIDATE"
+
+	const apiContext = api.useContext()
+
+	const { data: candidate } = api.candidate.current.useQuery(undefined, {
+		enabled: isCandidate,
+	})
+
 	const { data: job, isLoading: jobLoading } = api.job.findById.useQuery(jobId)
 
+	const jobIsLiked = job?.likedByIds.some((id) => id === candidate?.id)
+
 	const employerId = job?.employerId
+
+	console.log(employerId)
 
 	const { data: employer, isLoading: employerLoading } = api.employer.findById.useQuery(employerId!, {
 		enabled: !!employerId,
 	})
 
-	const [liked, setLiked] = useState(false)
+	const { mutate: toggleLikeJob, isLoading: togglingLikeJob } = api.candidate.toggleLikeJob.useMutation({
+		onSuccess: () => {
+			if (jobIsLiked) {
+				toast({
+					status: "warning",
+					title: "Job unsaved",
+					duration: 3000,
+					isClosable: true,
+				})
+			} else {
+				toast({
+					status: "success",
+					title: "Job Saved",
+					duration: 3000,
+					isClosable: true,
+				})
+			}
+			void apiContext.job.findById.invalidate()
+			void apiContext.candidate.findAllLikedJobs.invalidate()
+		},
+		onError: () => {
+			toast({
+				status: "error",
+				title: "Cannot Save Job",
+				description: "Jobs can only be saved by a candidate!",
+				duration: 4000,
+				isClosable: true,
+			})
+		},
+	})
 
 	if (!job || jobLoading || !employer || employerLoading) return <Skeleton h={"200px"} />
 
@@ -82,7 +115,16 @@ export function JobCard({ jobId }: JobCardProps) {
 						</Stack>
 					</HStack>
 
-					<IconButton aria-label="Bookmark Job" icon={<Icon as={IconBookmark} />} />
+					<IconButton
+						aria-label="Bookmark Job"
+						icon={<Icon as={IconBookmark} />}
+						colorScheme={jobIsLiked ? "blue" : "gray"}
+						onClick={() => {
+							if (!isCandidate) return
+							toggleLikeJob(job.id)
+						}}
+						isLoading={togglingLikeJob}
+					/>
 				</HStack>
 
 				<Stack flexGrow={1}>

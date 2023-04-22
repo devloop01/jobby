@@ -59,7 +59,7 @@ export const BlogAuthor: React.FC<BlogAuthorProps> = (props) => {
 const ArticleList = () => {
 	return (
 		<Container maxW={"full"} p="12">
-			<Heading as="h1">Stories by Chakra Templates</Heading>
+			<Heading as="h1">Stories by Jobby</Heading>
 			<Box
 				marginTop={{ base: "1", sm: "5" }}
 				display="flex"
@@ -114,7 +114,7 @@ const ArticleList = () => {
 						the industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a
 						galley of type and scrambled it to make a type specimen book.
 					</Text>
-					<BlogAuthor name="John Doe" date={new Date("2021-04-06T19:01:27Z")} />
+					<BlogAuthor name="Elon Musk" date={new Date("2023-04-06T19:01:27Z")} />
 				</Box>
 			</Box>
 			<Heading as="h2" marginTop="5">
@@ -152,7 +152,7 @@ const ArticleList = () => {
 							been the industry&apos;s standard dummy text ever since the 1500s, when an unknown printer
 							took a galley of type and scrambled it to make a type specimen book.
 						</Text>
-						<BlogAuthor name="John Doe" date={new Date("2021-04-06T19:01:27Z")} />
+						<BlogAuthor name="Elon Musk" date={new Date("2023-04-06T19:01:27Z")} />
 					</Box>
 				</WrapItem>
 			</Wrap>

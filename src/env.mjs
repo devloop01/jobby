@@ -22,6 +22,9 @@ const server = z.object({
 	SENDGRID_SMTP_PORT: z.string(),
 	SENDGRID_USERNAME: z.string(),
 	SENDGRID_API_KEY: z.string(),
+
+	SUPABASE_DB_URL: z.string(),
+	SUPABASE_ANON_KEY: z.string(),
 })
 
 /**
@@ -50,6 +53,9 @@ const processEnv = {
 	SENDGRID_SMTP_PORT: process.env.SENDGRID_SMTP_PORT,
 	SENDGRID_USERNAME: process.env.SENDGRID_USERNAME,
 	SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
+
+	SUPABASE_DB_URL: process.env.SUPABASE_DB_URL,
+	SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
 
 	// NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 }

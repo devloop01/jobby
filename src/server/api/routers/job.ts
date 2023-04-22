@@ -10,11 +10,17 @@ import { TRPCClientError } from "@trpc/client"
  */
 export const jobRouter = createTRPCRouter({
 	create: employerProcedure.input(jobCreateSchema).mutation(async ({ ctx, input }) => {
+		const employer = await ctx.prisma.employer.findUniqueOrThrow({
+			where: {
+				id: ctx.session.user.id,
+			},
+		})
+
 		const newJob = await ctx.prisma.jobPosting.create({
 			data: {
 				...input,
 				expirationDate: new Date(input.expirationDate).toISOString(),
-				employerId: "644049876adcfd1a948ed76f",
+				employerId: employer.id,
 			},
 		})
 
@@ -74,5 +80,19 @@ export const jobRouter = createTRPCRouter({
 				where: { employerId: input.employerId },
 				take: input.limit,
 			})
+		}),
+
+	likedByCandidate: protectedProcedure
+		.input(z.object({ candidateId: z.string().optional() }))
+		.query(async ({ ctx, input }) => {
+			const job = await ctx.prisma.jobPosting.findMany({
+				where: {
+					likedByIds: {
+						has: input.candidateId,
+					},
+				},
+			})
+
+			return job
 		}),
 })

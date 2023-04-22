@@ -11,7 +11,7 @@ export default function Blog() {
 			</Head>
 
 			<RootLayout>
-				<Heading>Blog</Heading>
+				<Heading>Our Blog</Heading>
 
 				<ArticleList />
 			</RootLayout>
