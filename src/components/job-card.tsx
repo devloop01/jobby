@@ -128,7 +128,14 @@ export function JobCard({ jobId }: JobCardProps) {
 						icon={<Icon as={IconBookmark} />}
 						colorScheme={jobIsLiked ? "blue" : "gray"}
 						onClick={() => {
-							if (!isCandidate) return
+							if (!isCandidate) {
+								toast({
+									status: "warning",
+									title: "Only candidates can save job",
+									isClosable: true,
+								})
+								return
+							}
 							toggleLikeJob(job.id)
 						}}
 						isLoading={togglingLikeJob}

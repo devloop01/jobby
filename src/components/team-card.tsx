@@ -2,12 +2,9 @@ import {
 	Heading,
 	Avatar,
 	Box,
-	Center,
 	Image,
 	Flex,
-	Text,
 	Stack,
-	Button,
 	useColorModeValue,
 	HStack,
 	IconButton,
@@ -60,7 +57,7 @@ export function TeamCard({ member }: TeamCardProps) {
 					<Heading fontSize={"2xl"} fontWeight={500} fontFamily={"body"}>
 						{member.name}
 					</Heading>
-					<Text color={"gray.500"}>Frontend Developer</Text>
+					{/* <Text color={"gray.500"}>Frontend Developer</Text> */}
 				</Stack>
 
 				<HStack justify={"center"}>

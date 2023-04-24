@@ -21,11 +21,12 @@ import {
 	MenuDivider,
 	Avatar,
 	Portal,
+	Badge,
 } from "@chakra-ui/react"
 import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons"
 import { signOut, useSession } from "next-auth/react"
 import NextLink from "next/link"
-import { IconUser } from "@tabler/icons-react"
+import { IconPlus, IconUser } from "@tabler/icons-react"
 import { IconLogout } from "@tabler/icons-react"
 import { forwardRef } from "react"
 
@@ -52,6 +53,10 @@ const NAV_ITEMS: Array<NavItem> = [
 	{
 		label: "Blog",
 		href: "/blog",
+	},
+	{
+		label: "Jobs",
+		href: "/jobs",
 	},
 	// {
 	// 	label: "Careers",
@@ -116,10 +121,21 @@ export const Header = forwardRef<HTMLDivElement>((_, ref) => {
 				{sessionData ? (
 					<Menu isLazy autoSelect={false}>
 						<MenuButton aria-label="Options">
-							<Avatar size={"sm"} name={sessionData.user.name ?? undefined} bg={"brand.500"} />
+							<Avatar
+								size={"sm"}
+								name={sessionData.user.name ?? undefined}
+								bg={sessionData.user.role === "EMPLOYER" ? "green.500" : "blue.500"}
+							/>
 						</MenuButton>
 						<Portal>
 							<MenuList boxShadow={"xl"} border={"1px"} borderColor={"gray.300"}>
+								{sessionData.user.role === "EMPLOYER" && (
+									<Box px={4}>
+										<Badge size={"sm"} colorScheme="green">
+											Company Account
+										</Badge>
+									</Box>
+								)}
 								<Box px={4} py={2}>
 									<Text>{sessionData.user.name ?? ""}</Text>
 									<Text fontSize={"sm"} color={"gray.500"}>
@@ -127,6 +143,18 @@ export const Header = forwardRef<HTMLDivElement>((_, ref) => {
 									</Text>
 								</Box>
 								<MenuDivider />
+								{sessionData.user.role === "EMPLOYER" && (
+									<MenuGroup>
+										<MenuItem
+											as={NextLink}
+											href="/jobs/create"
+											fontSize={15}
+											icon={<IconPlus size={16} />}
+										>
+											Create a Job
+										</MenuItem>
+									</MenuGroup>
+								)}
 								<MenuGroup>
 									<MenuItem as={NextLink} href="/profile" fontSize={15} icon={<IconUser size={16} />}>
 										Profile

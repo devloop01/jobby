@@ -1,6 +1,5 @@
 import { IconGoogle } from "@/components/icons"
 import RootLayout from "@/layouts/root-layout"
-import { getServerAuthSession } from "@/server/auth"
 import { api } from "@/utils/api"
 import {
 	Box,
@@ -31,7 +30,6 @@ import {
 	IconCash,
 	IconHourglass,
 	IconMapPin,
-	IconUser,
 } from "@tabler/icons-react"
 import { IconBookmark, IconBriefcase, IconCalendar, IconClock } from "@tabler/icons-react"
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
@@ -181,38 +179,39 @@ export default function JobDetails({ jobId }: InferGetServerSidePropsType<typeof
 								</Box>
 							</Box>
 
-							{jobIsApplied ? (
-								<HStack>
-									<Button size={"lg"} colorScheme="brand" fontSize={"md"} isDisabled>
-										Applied
-									</Button>
-								</HStack>
-							) : (
-								<HStack>
-									<Button
-										size={"lg"}
-										colorScheme="brand"
-										fontSize={"md"}
-										onClick={onJobApplyClick}
-										isLoading={applyingJob}
-									>
-										Apply For Job
-									</Button>
+							{session?.user.role === "CANDIDATE" &&
+								(jobIsApplied ? (
+									<HStack>
+										<Button size={"lg"} colorScheme="brand" fontSize={"md"} isDisabled>
+											Applied
+										</Button>
+									</HStack>
+								) : (
+									<HStack>
+										<Button
+											size={"lg"}
+											colorScheme="brand"
+											fontSize={"md"}
+											onClick={onJobApplyClick}
+											isLoading={applyingJob}
+										>
+											Apply For Job
+										</Button>
 
-									<IconButton
-										aria-label="Bookmark Job"
-										size={"lg"}
-										colorScheme="brand"
-										icon={<Icon as={IconBookmark} />}
-										variant={jobIsLiked ? "solid" : "outline"}
-										onClick={() => {
-											if (!isCandidate) return
-											toggleLikeJob(job.id)
-										}}
-										isLoading={togglingLikeJob}
-									/>
-								</HStack>
-							)}
+										<IconButton
+											aria-label="Bookmark Job"
+											size={"lg"}
+											colorScheme="brand"
+											icon={<Icon as={IconBookmark} />}
+											variant={jobIsLiked ? "solid" : "outline"}
+											onClick={() => {
+												if (!isCandidate) return
+												toggleLikeJob(job.id)
+											}}
+											isLoading={togglingLikeJob}
+										/>
+									</HStack>
+								))}
 						</Flex>
 					</Stack>
 

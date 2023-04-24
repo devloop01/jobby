@@ -1,3 +1,4 @@
+import { ImageWithFallback } from "@/components/image-with-fallback"
 import JobCard from "@/components/job-card"
 import RootLayout from "@/layouts/root-layout"
 import { api } from "@/utils/api"
@@ -61,7 +62,15 @@ export default function JobDetails({ employerId }: InferGetServerSidePropsType<t
 					<Box py={12} bgGradient={"linear(to-r, white, blue.100)"}>
 						<Center>
 							<Stack textAlign={"center"}>
-								<Image src={"/google.svg"} height={120} width={120} alt={"Company Avatar"} />
+								<Box borderRadius={"full"} overflow={"hidden"}>
+									<ImageWithFallback
+										src={employerProfile.companyImage ?? ""}
+										fallback="/placeholder-user-image.png"
+										height={120}
+										width={120}
+										alt={employerProfile.companyName}
+									/>
+								</Box>
 								<Text fontSize={"3xl"} fontWeight={600}>
 									{employerProfile.companyName}
 								</Text>
@@ -161,7 +170,7 @@ export default function JobDetails({ employerId }: InferGetServerSidePropsType<t
 													as={NextLink}
 													href={{
 														pathname: "/employers/[employerId]/jobs",
-														query: { employerId: employerProfile.id },
+														query: { employerId: employerProfile.employerId },
 													}}
 												>
 													Show more

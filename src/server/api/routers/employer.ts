@@ -78,7 +78,7 @@ export const employerRouter = createTRPCRouter({
 	}),
 
 	findProfileByEmployerId: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
-		return ctx.prisma.employerProfile.findUnique({
+		return ctx.prisma.employerProfile.findUniqueOrThrow({
 			where: { employerId: input },
 		})
 	}),

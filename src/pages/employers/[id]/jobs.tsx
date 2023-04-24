@@ -2,9 +2,11 @@ import type { GetServerSidePropsContext, InferGetServerSidePropsType } from "nex
 import Head from "next/head"
 
 import RootLayout from "@/layouts/root-layout"
-import { Box, Center, Grid, GridItem, HStack, Heading, Spinner, Stack, Text } from "@chakra-ui/react"
+import { Box, Button, Center, Grid, GridItem, HStack, Heading, Spinner, Stack, Text } from "@chakra-ui/react"
 import JobCard from "@/components/job-card"
 import { api } from "@/utils/api"
+import { useEffect } from "react"
+import Link from "next/link"
 
 // eslint-disable-next-line @typescript-eslint/require-await
 export async function getServerSideProps(context: GetServerSidePropsContext) {
@@ -16,16 +18,29 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 }
 
 export default function CompanyJobs({ employerId }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-	const { data: employerProfile, isLoading: employerProfileLoading } =
-		api.employer.findProfileByEmployerId.useQuery(employerId)
-	const { data: jobs, isLoading: jobsLoading } = api.job.findByEmployerId.useQuery({
-		employerId,
-	})
+	const {
+		data: employerProfile,
+		isLoading: employerProfileLoading,
+		error: employerError,
+	} = api.employer.findProfileByEmployerId.useQuery(employerId, { retry: false })
+	const { data: jobs } = api.job.findByEmployerId.useQuery({ employerId }, { retry: false })
 
-	if (!employerProfile || employerProfileLoading)
+	if (!employerProfile && employerProfileLoading)
 		return (
 			<Center h={"100vh"}>
 				<Spinner />
+			</Center>
+		)
+
+	if (employerError)
+		return (
+			<Center h={"100vh"}>
+				<Stack>
+					<Text fontSize={"2xl"}>Failed To Load</Text>
+					<Button as={Link} href={"/"}>
+						Return Home
+					</Button>
+				</Stack>
 			</Center>
 		)
 
