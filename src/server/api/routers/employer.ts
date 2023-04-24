@@ -83,6 +83,33 @@ export const employerRouter = createTRPCRouter({
 		})
 	}),
 
+	findAllApplicants: employerProcedure.query(async ({ ctx }) => {
+		const employer = await ctx.prisma.employer.findUniqueOrThrow({
+			where: { userId: ctx.session.user.id },
+		})
+
+		const candidateIds = await ctx.prisma.jobPosting.findMany({
+			where: {
+				employerId: employer.id,
+			},
+			select: {
+				appliedByIds: true,
+			},
+		})
+
+		const candidateIdsList = candidateIds.flatMap((o) => o.appliedByIds).filter((arr) => arr.length !== 0)
+
+		const candidates = await ctx.prisma.candidate.findMany({
+			where: {
+				id: {
+					in: candidateIdsList,
+				},
+			},
+		})
+
+		return candidates
+	}),
+
 	updateProfile: protectedProcedure
 		.input(z.object({ id: z.string() }).merge(employerProfileSchema))
 		.mutation(async ({ ctx, input: { id, ...profileData } }) => {

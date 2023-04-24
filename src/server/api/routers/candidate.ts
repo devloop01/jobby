@@ -1,5 +1,5 @@
 import { candidateContactSchema, candidateProfileSchema } from "@/utils/schema/candidate"
-import { createTRPCRouter, protectedProcedure } from "../trpc"
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
 import { z } from "zod"
 import { type PrismaClient } from "@prisma/client"
 
@@ -64,6 +64,22 @@ export const candidateRouter = createTRPCRouter({
 
 		const candidateProfile = await ctx.prisma.candidateProfile.findFirst({
 			where: { candidateId: candidate.id },
+		})
+
+		return candidateProfile
+	}),
+
+	findById: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
+		const candidate = await ctx.prisma.candidate.findUnique({
+			where: { id: input },
+		})
+
+		return candidate
+	}),
+
+	findProfileByCandidateId: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
+		const candidateProfile = await ctx.prisma.candidateProfile.findUnique({
+			where: { candidateId: input },
 		})
 
 		return candidateProfile

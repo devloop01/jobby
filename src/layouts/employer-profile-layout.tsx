@@ -39,7 +39,7 @@ interface LinkItemProps {
 const LinkItems: Array<LinkItemProps> = [
 	{ name: "My Profile", href: "/profile/employer", icon: IconUser },
 	{ name: "Manage Jobs", href: "/profile/employer/manage-jobs", icon: IconBriefcase },
-	{ name: "All Applicants", href: "/profile/employer/saved-jobs", icon: IconUsers },
+	{ name: "All Applicants", href: "/profile/employer/all-applicants", icon: IconUsers },
 ]
 
 function ProfileSidebar({ children }: { children: ReactNode }) {

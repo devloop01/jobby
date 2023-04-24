@@ -92,6 +92,9 @@ export const jobRouter = createTRPCRouter({
 			return ctx.prisma.jobPosting.findMany({
 				where: { employerId: input.employerId },
 				take: input.limit,
+				orderBy: {
+					createdAt: "desc",
+				},
 			})
 		}),
 
