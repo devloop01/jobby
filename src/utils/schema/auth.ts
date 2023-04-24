@@ -55,7 +55,7 @@ export const signUpEmployerSchema = z
 		companyFoundedYear: z.string().regex(new RegExp("^([0-9]{4})?$"), "Invalid Year").optional(),
 		companySize: z.string().min(1, "Please select a value"),
 		companyAddress: z.string().min(1, "Address is required"),
-		companyDescription: z.string().max(256).optional(),
+		companyDescription: z.string().max(1056).optional(),
 	})
 	.refine((data) => data.password === data.confirmPassword, {
 		path: ["confirmPassword"],

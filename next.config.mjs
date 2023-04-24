@@ -18,5 +18,9 @@ const config = {
 		locales: ["en"],
 		defaultLocale: "en",
 	},
+
+	images: {
+		domains: ["jobby-image-bucket.s3.ap-south-1.amazonaws.com"],
+	},
 }
 export default config

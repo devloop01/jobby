@@ -65,9 +65,12 @@ export default function JobDetails({ jobId }: InferGetServerSidePropsType<typeof
 
 	const employerId = job?.employerId
 
-	const { data: employer, isLoading: employerLoading } = api.employer.findById.useQuery(employerId!, {
-		enabled: !!employerId,
-	})
+	const { data: employerProfile, isLoading: employerProfileLoading } = api.employer.findProfileByEmployerId.useQuery(
+		employerId!,
+		{
+			enabled: !!employerId,
+		}
+	)
 
 	const { mutate: applyJob, isLoading: applyingJob } = api.candidate.applyJob.useMutation({
 		onSuccess: () => {
@@ -132,7 +135,7 @@ export default function JobDetails({ jobId }: InferGetServerSidePropsType<typeof
 		}
 	}
 
-	if (!job || jobLoading || !employer || employerLoading)
+	if (!job || jobLoading || !employerProfile || employerProfileLoading)
 		return (
 			<Center h={"100vh"}>
 				<Spinner />
@@ -153,7 +156,7 @@ export default function JobDetails({ jobId }: InferGetServerSidePropsType<typeof
 								<Stack textAlign={"center"}>
 									<Image src={"/google.svg"} height={120} width={120} alt={"Company Avatar"} />
 									<Text fontSize={"3xl"} fontWeight={600}>
-										{employer.companyName}
+										{employerProfile.companyName}
 									</Text>
 								</Stack>
 							</Center>
@@ -342,7 +345,7 @@ export default function JobDetails({ jobId }: InferGetServerSidePropsType<typeof
 											href={{
 												pathname: "/employers/[employerId]",
 												query: {
-													employerId: employer.id,
+													employerId: employerProfile.id,
 												},
 											}}
 											fontSize={"sm"}
@@ -363,27 +366,27 @@ export default function JobDetails({ jobId }: InferGetServerSidePropsType<typeof
 								<Stack px={4} spacing={4}>
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Company Size:</Text>
-										<Text color={"gray.600"}>{employer.companySize}</Text>
+										<Text color={"gray.600"}>{employerProfile.companySize}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Founded In:</Text>
-										<Text color={"gray.600"}>{employer.companyFoundedYear}</Text>
+										<Text color={"gray.600"}>{employerProfile.companyFoundedYear}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Phone:</Text>
-										<Text color={"gray.600"}>{employer.companyPhone}</Text>
+										<Text color={"gray.600"}>{employerProfile.companyPhone}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Email:</Text>
-										<Text color={"gray.600"}>{employer.companyEmail}</Text>
+										<Text color={"gray.600"}>{employerProfile.companyEmail}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Location:</Text>
-										<Text color={"gray.600"}>{employer.companyAddress}</Text>
+										<Text color={"gray.600"}>{employerProfile.companyAddress}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>

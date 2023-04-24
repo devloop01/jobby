@@ -10,7 +10,7 @@ import JobCard from "@/components/job-card"
 import Link from "next/link"
 
 const Home: NextPage = () => {
-	const { data: jobs, isLoading: jobsLoading } = api.job.find.useQuery({
+	const { data: jobs, isLoading: jobsLoading } = api.job.findAll.useQuery({
 		limit: 4,
 	})
 

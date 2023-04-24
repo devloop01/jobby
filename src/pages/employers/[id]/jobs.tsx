@@ -16,12 +16,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 }
 
 export default function CompanyJobs({ employerId }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-	const { data: employer, isLoading: employerLoading } = api.employer.findById.useQuery(employerId)
+	const { data: employerProfile, isLoading: employerProfileLoading } =
+		api.employer.findProfileByEmployerId.useQuery(employerId)
 	const { data: jobs, isLoading: jobsLoading } = api.job.findByEmployerId.useQuery({
 		employerId,
 	})
 
-	if (!employer || employerLoading)
+	if (!employerProfile || employerProfileLoading)
 		return (
 			<Center h={"100vh"}>
 				<Spinner />
@@ -31,13 +32,13 @@ export default function CompanyJobs({ employerId }: InferGetServerSidePropsType<
 	return (
 		<>
 			<Head>
-				<title>{`Jobs by ${employer.companyName} | Jobby`}</title>
+				<title>{`Jobs by ${employerProfile.companyName} | Jobby`}</title>
 			</Head>
 
 			<RootLayout>
 				<Stack spacing={6}>
 					<HStack>
-						<Heading>Jobs by {employer.companyName}</Heading>
+						<Heading>Jobs by {employerProfile.companyName}</Heading>
 						{jobs && <Text fontSize={"xl"} fontWeight={600}>{`(${jobs.length} jobs open)`}</Text>}
 					</HStack>
 

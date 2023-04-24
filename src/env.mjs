@@ -22,9 +22,6 @@ const server = z.object({
 	SENDGRID_SMTP_PORT: z.string(),
 	SENDGRID_USERNAME: z.string(),
 	SENDGRID_API_KEY: z.string(),
-
-	// SUPABASE_DB_URL: z.string(),
-	// SUPABASE_ANON_KEY: z.string(),
 })
 
 /**
@@ -32,7 +29,7 @@ const server = z.object({
  * built with invalid env vars. To expose them to the client, prefix them with `NEXT_PUBLIC_`.
  */
 const client = z.object({
-	// NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
+	NEXT_PUBLIC_TRANSLOADIT_AUTH_KEY: z.string(),
 })
 
 /**
@@ -54,10 +51,7 @@ const processEnv = {
 	SENDGRID_USERNAME: process.env.SENDGRID_USERNAME,
 	SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
 
-	// SUPABASE_DB_URL: process.env.SUPABASE_DB_URL,
-	// SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
-
-	// NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+	NEXT_PUBLIC_TRANSLOADIT_AUTH_KEY: process.env.NEXT_PUBLIC_TRANSLOADIT_AUTH_KEY,
 }
 
 // Don't touch the part below

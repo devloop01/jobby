@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { Box, Text, HStack, Card, Icon, Stack, Button, Skeleton } from "@chakra-ui/react"
 import { IconMapPin } from "@tabler/icons-react"
 import Image from "next/image"
@@ -10,11 +9,10 @@ interface EmployerCardProps {
 }
 
 export function EmployerCard({ employerId }: EmployerCardProps) {
-	const { data: employer, isLoading: employerLoading } = api.employer.findById.useQuery(employerId)
+	const { data: employerProfile, isLoading: employerProfileLoading } =
+		api.employer.findProfileByEmployerId.useQuery(employerId)
 
-	const [liked, setLiked] = useState(false)
-
-	if (!employer || employerLoading) return <Skeleton h={"200px"} />
+	if (!employerProfile || employerProfileLoading) return <Skeleton h={"200px"} />
 
 	return (
 		<Card
@@ -39,17 +37,17 @@ export function EmployerCard({ employerId }: EmployerCardProps) {
 						<NextLink
 							href={{
 								pathname: "/employers/[employerId]",
-								query: { employerId: employer.id },
+								query: { employerId: employerProfile.id },
 							}}
 						>
 							<Text fontSize={"xl"} fontWeight={600} _hover={{ color: "blue.500" }}>
-								{employer.companyName}
+								{employerProfile.companyName}
 							</Text>
 						</NextLink>
 
 						<HStack color={"gray.500"}>
 							<Icon as={IconMapPin} />
-							<Text>{employer.companyAddress}</Text>
+							<Text>{employerProfile.companyAddress}</Text>
 						</HStack>
 					</Box>
 
@@ -57,7 +55,7 @@ export function EmployerCard({ employerId }: EmployerCardProps) {
 						as={NextLink}
 						href={{
 							pathname: "/employers/[employerId]/jobs",
-							query: { employerId: employer.id },
+							query: { employerId: employerProfile.id },
 						}}
 					>
 						12 Jobs Open

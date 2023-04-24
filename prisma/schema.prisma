@@ -34,16 +34,6 @@ enum UserRole {
     CANDIDATE
 }
 
-// model VerificationToken {
-//     id         String   @id @default(auto()) @map("_id") @db.ObjectId
-//     identifier String
-//     token      String   @unique
-//     expires    DateTime
-
-//     @@unique([identifier, token])
-//     @@map("verification_tokens")
-// }
-
 type Link {
     label String
     href  String
@@ -70,19 +60,9 @@ model Candidate {
 }
 
 model Employer {
-    id                 String  @id @default(auto()) @map("_id") @db.ObjectId
-    email              String
-    companyName        String
-    companySize        String
-    companyWebsite     String?
-    companyFoundedYear String?
-    companyPhone       String
-    companyEmail       String
-    companyAddress     String
-    companyDescription String?
-    companyImage       String?
-    socialLinks        Link[]
-    userId             String  @unique @db.ObjectId
+    id     String @id @default(auto()) @map("_id") @db.ObjectId
+    email  String
+    userId String @unique @db.ObjectId
 
     user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
     employer EmployerProfile?
@@ -110,7 +90,13 @@ model CandidateProfile {
     showInListings    Boolean @default(true)
     bio               String?
     image             String?
-    isComplete        Boolean @default(false)
+
+    country String?
+    city    String?
+    state   String?
+    pincode String?
+
+    isComplete Boolean @default(false)
 
     candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
 
@@ -121,6 +107,25 @@ model EmployerProfile {
     id         String @id @default(auto()) @map("_id") @db.ObjectId
     employerId String @unique @db.ObjectId
 
+    companyName        String
+    companySize        String
+    companyWebsite     String?
+    companyFoundedYear String?
+    companyPhone       String
+    companyEmail       String
+    companyAddress     String
+    companyDescription String?
+    socialLinks        Link[]
+    companyImage       String?
+    image              String?
+
+    country String?
+    city    String?
+    state   String?
+    pincode String?
+
+    isComplete Boolean @default(false)
+
     employer Employer @relation(fields: [employerId], references: [id], onDelete: Cascade)
 
     @@map("employer_profiles")
@@ -130,19 +135,24 @@ type Field {
     value String
 }
 
+type Category {
+    label String
+    value String
+}
+
 model JobPosting {
-    id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+    id                  String     @id @default(auto()) @map("_id") @db.ObjectId
     title               String
     description         String
     keyResponsibilities Field[]
     skillAndExperience  Field[]
-    categories          String[]
+    categories          Category[]
     location            String
     hours               String
     salary              String
     expirationDate      DateTime
-    createdAt           DateTime @default(now())
-    updatedAt           DateTime @updatedAt
+    createdAt           DateTime   @default(now())
+    updatedAt           DateTime   @updatedAt
 
     employer   Employer @relation(fields: [employerId], references: [id], onDelete: Cascade)
     employerId String   @db.ObjectId

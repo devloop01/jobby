@@ -19,21 +19,25 @@ import { useForm, type SubmitHandler } from "react-hook-form"
 import { z } from "zod"
 
 const formSchema = z.object({
-	jobTitle: z.string().min(1, "required"),
+	jobTitle: z.string(),
 })
 
 type FormSchema = z.infer<typeof formSchema>
 
 interface SearchFormProps {
 	onSearchPress?: (formData: FormSchema) => void
+	text?: string
 }
 
-export function SearchForm({ onSearchPress }: SearchFormProps) {
+export function SearchForm({ onSearchPress, text }: SearchFormProps) {
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
 	} = useForm<FormSchema>({
+		defaultValues: {
+			jobTitle: text,
+		},
 		resolver: zodResolver(formSchema),
 	})
 

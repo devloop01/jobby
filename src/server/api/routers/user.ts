@@ -103,14 +103,6 @@ export const userRouter = createTRPCRouter({
 			const employer = await tx.employer.create({
 				data: {
 					email,
-					companyName: input.companyName,
-					companySize: input.companySize,
-					companyWebsite: input.companyWebsite,
-					companyFoundedYear: input.companyFoundedYear,
-					companyPhone: input.companyPhone,
-					companyEmail: input.companyEmail,
-					companyAddress: input.companyAddress,
-					companyDescription: input.companyDescription,
 					user: {
 						connect: { id: user.id },
 					},
@@ -119,6 +111,14 @@ export const userRouter = createTRPCRouter({
 
 			const employerProfile = await tx.employerProfile.create({
 				data: {
+					companyName: input.companyName,
+					companySize: input.companySize,
+					companyWebsite: input.companyWebsite,
+					companyFoundedYear: input.companyFoundedYear,
+					companyPhone: input.companyPhone,
+					companyEmail: input.companyEmail,
+					companyAddress: input.companyAddress,
+					companyDescription: input.companyDescription,
 					employer: {
 						connect: {
 							id: employer.id,

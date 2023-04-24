@@ -1,11 +1,10 @@
-import { useState } from "react"
-import { Heading, Text, HStack, Card, IconButton, Icon, Stack, Badge, Skeleton, useToast } from "@chakra-ui/react"
+import { Heading, Text, HStack, Card, IconButton, Icon, Stack, Badge, Skeleton, useToast, Box } from "@chakra-ui/react"
 import { IconBookmark, IconMapPin, IconClock, IconCoinRupee } from "@tabler/icons-react"
-import Image from "next/image"
 import Link from "next/link"
 import { api } from "@/utils/api"
 import { formatDistance } from "date-fns"
 import { useSession } from "next-auth/react"
+import { ImageWithFallback } from "./image-with-fallback"
 
 interface JobCardProps {
 	jobId: string
@@ -29,9 +28,12 @@ export function JobCard({ jobId }: JobCardProps) {
 
 	const employerId = job?.employerId
 
-	const { data: employer, isLoading: employerLoading } = api.employer.findById.useQuery(employerId!, {
-		enabled: !!employerId,
-	})
+	const { data: employerProfile, isLoading: employerProfileLoading } = api.employer.findProfileByEmployerId.useQuery(
+		employerId!,
+		{
+			enabled: !!employerId,
+		}
+	)
 
 	const { mutate: toggleLikeJob, isLoading: togglingLikeJob } = api.candidate.toggleLikeJob.useMutation({
 		onSuccess: () => {
@@ -64,7 +66,7 @@ export function JobCard({ jobId }: JobCardProps) {
 		},
 	})
 
-	if (!job || jobLoading || !employer || employerLoading) return <Skeleton h={"200px"} />
+	if (!job || jobLoading || !employerProfile || employerProfileLoading) return <Skeleton h={"200px"} />
 
 	const currentDate = new Date()
 	const jobPostedAgo = formatDistance(currentDate, job.createdAt)
@@ -87,13 +89,21 @@ export function JobCard({ jobId }: JobCardProps) {
 			<Stack p={6}>
 				<HStack justify={"space-between"}>
 					<HStack align={"start"}>
-						<Image src={"/google.svg"} height={50} width={50} alt={"Company Avatar"} />
+						<Box borderRadius={"full"} overflow={"hidden"}>
+							<ImageWithFallback
+								src={employerProfile.companyImage ?? ""}
+								fallback="/placeholder-user-image.png"
+								height={50}
+								width={50}
+								alt={employerProfile.companyName}
+							/>
+						</Box>
 
 						<Stack spacing={0}>
 							<Link
 								href={{
 									pathname: "/employers/[employerId]",
-									query: { employerId: employer.id },
+									query: { employerId: employerProfile.employerId },
 								}}
 							>
 								<Text
@@ -102,7 +112,7 @@ export function JobCard({ jobId }: JobCardProps) {
 									_hover={{ color: "blue.600" }}
 									textAlign={"left"}
 								>
-									{employer.companyName}
+									{employerProfile.companyName}
 								</Text>
 							</Link>
 
@@ -153,7 +163,7 @@ export function JobCard({ jobId }: JobCardProps) {
 				<HStack flexWrap={"wrap"}>
 					{job.categories.map((category) => (
 						<Badge
-							key={category}
+							key={category.label}
 							textTransform={"uppercase"}
 							px={2}
 							py={1}
@@ -161,7 +171,7 @@ export function JobCard({ jobId }: JobCardProps) {
 							color="white"
 							borderRadius="full"
 						>
-							{category}
+							{category.value}
 						</Badge>
 					))}
 				</HStack>

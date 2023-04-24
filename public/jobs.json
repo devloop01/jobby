@@ -14,8 +14,8 @@
 		"hours": "100",
 		"salary": "200000",
 		"expirationDate": "2023-04-30T00:00:00.000+00:00",
-		"employerId": "644049876adcfd1a948ed76f",
-		"categories": ["backend"]
+		"employerId": "6445e382625bbef68ced7dd6",
+		"categories": [{ "label": "Backend", "value": "backend" }]
 	},
 
 	{
@@ -30,8 +30,8 @@
 		"hours": "100",
 		"salary": "200000",
 		"expirationDate": "2023-04-30T00:00:00.000+00:00",
-		"employerId": "644049876adcfd1a948ed76f",
-		"categories": ["designer"]
+		"employerId": "6445e382625bbef68ced7dd6",
+		"categories": [{ "label": "Backend", "value": "backend" }]
 	},
 
 	{
@@ -46,8 +46,8 @@
 		"hours": "100",
 		"salary": "200000",
 		"expirationDate": "2023-04-30T00:00:00.000+00:00",
-		"employerId": "644049876adcfd1a948ed76f",
-		"categories": ["artist"]
+		"employerId": "6445e382625bbef68ced7dd6",
+		"categories": [{ "label": "Backend", "value": "backend" }]
 	},
 
 	{
@@ -65,8 +65,8 @@
 		"hours": "100",
 		"salary": "200000",
 		"expirationDate": "2023-04-30T00:00:00.000+00:00",
-		"employerId": "644049876adcfd1a948ed76f",
-		"categories": ["backend"]
+		"employerId": "6445e382625bbef68ced7dd6",
+		"categories": [{ "label": "Backend", "value": "backend" }]
 	},
 
 	{
@@ -81,8 +81,8 @@
 		"hours": "100",
 		"salary": "200000",
 		"expirationDate": "2023-04-30T00:00:00.000+00:00",
-		"employerId": "644049876adcfd1a948ed76f",
-		"categories": ["accounting"]
+		"employerId": "6445e382625bbef68ced7dd6",
+		"categories": [{ "label": "Backend", "value": "backend" }]
 	},
 
 	{
@@ -97,7 +97,7 @@
 		"hours": "100",
 		"salary": "200000",
 		"expirationDate": "2023-04-30T00:00:00.000+00:00",
-		"employerId": "644049876adcfd1a948ed76f",
-		"categories": ["education"]
+		"employerId": "6445e382625bbef68ced7dd6",
+		"categories": [{ "label": "Backend", "value": "backend" }]
 	}
 ]

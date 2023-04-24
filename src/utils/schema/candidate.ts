@@ -25,4 +25,12 @@ export const candidateProfileSchema = z.object({
 	bio: z.string().min(80).max(300),
 })
 
+export const candidateContactSchema = z.object({
+	country: z.string().min(1, "required"),
+	city: z.string().min(1, "required"),
+	state: z.string().min(1, "required"),
+	pincode: z.string().min(1, "required").max(6, "Invalid pincode"),
+})
+
 export type CandidateProfileSchema = z.infer<typeof candidateProfileSchema>
+export type CandidateContactSchema = z.infer<typeof candidateContactSchema>

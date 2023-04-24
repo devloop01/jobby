@@ -1,7 +1,46 @@
-import { candidateProfileSchema } from "@/utils/schema/candidate"
+import { candidateContactSchema, candidateProfileSchema } from "@/utils/schema/candidate"
 import { createTRPCRouter, protectedProcedure } from "../trpc"
 import { z } from "zod"
-import { TRPCClientError } from "@trpc/client"
+import { type PrismaClient } from "@prisma/client"
+
+async function isCandidateProfileComplete(id: string, prisma: PrismaClient) {
+	const candidateProfile = await prisma.candidateProfile.findUniqueOrThrow({
+		where: { id },
+		select: {
+			fullName: true,
+			jobTitle: true,
+			phone: true,
+			email: true,
+			website: true,
+			experienceInYears: true,
+			age: true,
+			skills: true,
+			showInListings: true,
+			bio: true,
+			country: true,
+			city: true,
+			state: true,
+			pincode: true,
+		},
+	})
+
+	const isAllFieldsSet = Object.values(candidateProfile)
+		.map((v) => (typeof v === "object" && v instanceof Array ? Boolean(v.length) : Boolean(v)))
+		.every((v) => v === true)
+
+	return isAllFieldsSet
+}
+
+async function markCandidateProfileCompleted(id: string, prisma: PrismaClient) {
+	const isProfileComplete = await isCandidateProfileComplete(id, prisma)
+
+	return await prisma.candidateProfile.update({
+		where: { id },
+		data: {
+			isComplete: isProfileComplete,
+		},
+	})
+}
 
 /**
  * User Routers
@@ -52,34 +91,44 @@ export const candidateRouter = createTRPCRouter({
 				},
 			})
 
-			const parsedProfile = candidateProfileSchema.safeParse(updatedProfile)
-
-			if (parsedProfile.success)
-				await ctx.prisma.candidateProfile.update({
-					where: {
-						id,
-					},
-					data: {
-						isComplete: true,
-					},
-				})
+			await markCandidateProfileCompleted(id, ctx.prisma)
 
 			return updatedProfile
 		}),
 
-	// findSavedJobs: protectedProcedure
-	// 	.input(
-	// 		z.object({
-	// 			candidateId: z.string(),
-	// 		})
-	// 	)
-	// 	.query(async ({ ctx, input }) => {
-	// 		const jobs = await ctx.prisma.jobPosting.findMany({
-	// 			where: { candidateId: input.candidateId },
-	// 		})
+	updateProfileImage: protectedProcedure
+		.input(z.object({ id: z.string(), imageUrl: z.string().nullable() }))
+		.mutation(async ({ ctx, input }) => {
+			const updatedProfile = await ctx.prisma.candidateProfile.update({
+				where: { id: input.id },
+				data: {
+					image: input.imageUrl,
+				},
+			})
 
-	// 		return jobs
-	// 	}),
+			return updatedProfile
+		}),
+
+	updateContactDetails: protectedProcedure
+		.input(z.object({ id: z.string() }).merge(candidateContactSchema))
+		.mutation(async ({ ctx, input: { id, ...profileData } }) => {
+			const updatedProfile = await ctx.prisma.candidateProfile.update({
+				where: { id },
+				data: {
+					...profileData,
+				},
+				select: {
+					country: true,
+					city: true,
+					state: true,
+					pincode: true,
+				},
+			})
+
+			await markCandidateProfileCompleted(id, ctx.prisma)
+
+			return updatedProfile
+		}),
 
 	findAllLikedJobs: protectedProcedure.query(async ({ ctx }) => {
 		const candidate = await ctx.prisma.candidate.findFirstOrThrow({
@@ -169,7 +218,7 @@ export const candidateRouter = createTRPCRouter({
 
 			const profileIsCompleted = candidateProfile.isComplete
 
-			if (!profileIsCompleted) throw new TRPCClientError("candidate profile is not complete!")
+			if (!profileIsCompleted) throw new Error("candidate profile is not complete!")
 
 			await ctx.prisma.candidate.update({
 				where: {

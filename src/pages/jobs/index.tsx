@@ -14,24 +14,26 @@ import {
 	Select,
 	Spinner,
 	Stack,
+	Text,
 } from "@chakra-ui/react"
 import Head from "next/head"
 import Link from "next/link"
 import { useRouter } from "next/router"
-import { useState } from "react"
 
 export default function Jobs() {
 	const router = useRouter()
 
 	const searchText = router.query.searchText as string | undefined
+	const sortBy = router.query.sortBy as string | undefined
 
 	const {
 		data: jobs,
 		isLoading: jobsLoading,
 		error: jobsError,
 		refetch: refetchJobs,
-	} = api.job.find.useQuery({
+	} = api.job.findAll.useQuery({
 		jobTitle: searchText,
+		sortBy,
 	})
 
 	return (
@@ -47,6 +49,7 @@ export default function Jobs() {
 					</Heading>
 					<Flex align={"center"} justify={"center"} px={{ base: 0, md: 10 }}>
 						<SearchForm
+							text={searchText}
 							onSearchPress={({ jobTitle }) => {
 								router.query.searchText = encodeURI(jobTitle)
 								void router.push(router)
@@ -58,20 +61,21 @@ export default function Jobs() {
 
 				<Stack my={12} spacing={12}>
 					<Flex justify={"space-between"}>
-						<Grid templateColumns={{ sm: "repeat(3, 1fr)" }}>
-							<GridItem>
-								<Select bg="blue.400" color="white" placeholder="Job Type"></Select>
-							</GridItem>
-							<GridItem>
-								<Select bg="blue.400" color="white" placeholder="Experience Level"></Select>
-							</GridItem>
-							<GridItem>
-								<Select bg="blue.400" color="white" placeholder="Salary"></Select>
-							</GridItem>
-						</Grid>
-
-						<Stack direction={"row"}>
-							<Select placeholder="Sort by (default)"></Select>
+						<Stack>
+							<Text>Sort By</Text>
+							<Select
+								value={sortBy}
+								onChange={(e) => {
+									const sort = e.currentTarget.value
+									router.query.sortBy = encodeURI(sort)
+									void router.push(router)
+									void refetchJobs()
+								}}
+							>
+								<option value="latest">latest</option>
+								<option value="asc">a-z</option>
+								<option value="desc">z-a</option>
+							</Select>
 						</Stack>
 					</Flex>
 

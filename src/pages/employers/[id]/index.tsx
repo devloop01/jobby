@@ -36,13 +36,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 }
 
 export default function JobDetails({ employerId }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-	const { data: employer, isLoading: employerLoading } = api.employer.findById.useQuery(employerId)
+	const { data: employerProfile, isLoading: employerProfileLoading } =
+		api.employer.findProfileByEmployerId.useQuery(employerId)
 	const { data: jobs, isLoading: jobsLoading } = api.job.findByEmployerId.useQuery({
 		employerId,
 		limit: 3,
 	})
 
-	if (!employer || employerLoading)
+	if (!employerProfile || employerProfileLoading)
 		return (
 			<Center h={"100vh"}>
 				<Spinner />
@@ -52,7 +53,7 @@ export default function JobDetails({ employerId }: InferGetServerSidePropsType<t
 	return (
 		<>
 			<Head>
-				<title>{`${employer.companyName} | Jobby`}</title>
+				<title>{`${employerProfile.companyName} | Jobby`}</title>
 			</Head>
 
 			<RootLayout>
@@ -62,7 +63,7 @@ export default function JobDetails({ employerId }: InferGetServerSidePropsType<t
 							<Stack textAlign={"center"}>
 								<Image src={"/google.svg"} height={120} width={120} alt={"Company Avatar"} />
 								<Text fontSize={"3xl"} fontWeight={600}>
-									{employer.companyName}
+									{employerProfile.companyName}
 								</Text>
 							</Stack>
 						</Center>
@@ -81,27 +82,27 @@ export default function JobDetails({ employerId }: InferGetServerSidePropsType<t
 								<Stack px={4} spacing={4}>
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Company Size:</Text>
-										<Text color={"gray.600"}>{employer.companySize}</Text>
+										<Text color={"gray.600"}>{employerProfile.companySize}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Founded In:</Text>
-										<Text color={"gray.600"}>{employer.companyFoundedYear}</Text>
+										<Text color={"gray.600"}>{employerProfile.companyFoundedYear}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Phone:</Text>
-										<Text color={"gray.600"}>{employer.companyPhone}</Text>
+										<Text color={"gray.600"}>{employerProfile.companyPhone}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Email:</Text>
-										<Text color={"gray.600"}>{employer.companyEmail}</Text>
+										<Text color={"gray.600"}>{employerProfile.companyEmail}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Location:</Text>
-										<Text color={"gray.600"}>{employer.companyAddress}</Text>
+										<Text color={"gray.600"}>{employerProfile.companyAddress}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
@@ -127,13 +128,13 @@ export default function JobDetails({ employerId }: InferGetServerSidePropsType<t
 
 						<GridItem colSpan={8}>
 							<Stack spacing={8}>
-								{employer.companyDescription?.length !== 0 && (
+								{employerProfile.companyDescription?.length !== 0 && (
 									<Stack>
 										<Heading as="h3" fontSize={"3xl"}>
 											About Company
 										</Heading>
 
-										<Text color={"gray.700"}>{employer.companyDescription}</Text>
+										<Text color={"gray.700"}>{employerProfile.companyDescription}</Text>
 									</Stack>
 								)}
 
@@ -160,7 +161,7 @@ export default function JobDetails({ employerId }: InferGetServerSidePropsType<t
 													as={NextLink}
 													href={{
 														pathname: "/employers/[employerId]/jobs",
-														query: { employerId: employer.id },
+														query: { employerId: employerProfile.id },
 													}}
 												>
 													Show more

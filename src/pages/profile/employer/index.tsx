@@ -1,6 +1,5 @@
 import Head from "next/head"
 
-import RootLayout from "@/layouts/root-layout"
 import {
 	Box,
 	Button,
@@ -26,8 +25,7 @@ import {
 	Badge,
 	Tooltip,
 } from "@chakra-ui/react"
-import { type GetServerSidePropsContext, type InferGetServerSidePropsType } from "next"
-import ProfileLayout from "@/layouts/profile-layout"
+import { type InferGetServerSidePropsType } from "next"
 import { CreatableSelect } from "chakra-react-select"
 import { useState } from "react"
 import { useForm, type SubmitHandler, Controller } from "react-hook-form"
@@ -43,48 +41,41 @@ import ImageUploader from "@/components/image-uploader"
 import { ImageWithFallback } from "@/components/image-with-fallback"
 import { QuestionIcon } from "@chakra-ui/icons"
 import { IconCircleFilled } from "@tabler/icons-react"
-import { getServerAuthSession } from "@/server/auth"
 
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-	const session = await getServerAuthSession(context)
+import EmployerProfileLayout from "@/layouts/employer-profile-layout"
+import RootLayout from "@/layouts/root-layout"
 
-	if (!session)
-		return {
-			redirect: {
-				destination: "/sign-in",
-				permanent: false,
-			},
-		}
+import { isEmployer } from "@/utils"
+import {
+	type EmployerProfileSchema,
+	employerProfileSchema,
+	type EmployerContactSchema,
+	employerContactSchema,
+} from "@/utils/schema/employer"
 
-	if (session.user.role === "EMPLOYER")
-		return {
-			redirect: {
-				destination: "/profile/employer",
-				permanent: false,
-			},
-		}
-
+// eslint-disable-next-line @typescript-eslint/require-await
+export const getServerSideProps = isEmployer(async () => {
 	return {
 		props: {},
 	}
-}
+})
 
-export default function Profile({}: InferGetServerSidePropsType<typeof getServerSideProps>) {
-	const { data: currentProfile, isLoading: profileLoading } = api.candidate.currentProfile.useQuery()
+export default function EmployerProfile({}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+	const { data: currentProfile, isLoading: profileLoading } = api.employer.currentProfile.useQuery()
 
 	return (
 		<>
 			<Head>
-				<title>Profile | Jobby</title>
+				<title>Profile - Employer | Jobby</title>
 			</Head>
 
 			<RootLayout>
 				<Stack>
-					<ProfileLayout>
+					<EmployerProfileLayout>
 						<Stack px={{ base: 6, md: 12 }} spacing={6}>
 							<Stack>
 								<Heading as="h2" size="lg">
-									My Profile
+									Company Profile
 								</Heading>
 
 								{currentProfile && (
@@ -127,7 +118,7 @@ export default function Profile({}: InferGetServerSidePropsType<typeof getServer
 
 							<ChangePasswordForm />
 						</Stack>
-					</ProfileLayout>
+					</EmployerProfileLayout>
 				</Stack>
 			</RootLayout>
 		</>
@@ -135,7 +126,6 @@ export default function Profile({}: InferGetServerSidePropsType<typeof getServer
 }
 
 function ProfileForm() {
-	const [showInListings, setShowInListings] = useState(true)
 	const {
 		isOpen: imageUploadModalOpen,
 		onOpen: openImageUploadModal,
@@ -146,36 +136,33 @@ function ProfileForm() {
 
 	const {
 		register,
-		control,
 		formState: { errors, isDirty },
 		handleSubmit,
 		reset,
-	} = useForm<CandidateProfileSchema>({
-		resolver: zodResolver(candidateProfileSchema),
+	} = useForm<EmployerProfileSchema>({
+		resolver: zodResolver(employerProfileSchema),
 	})
 
 	const apiContext = api.useContext()
 
-	const { data: currentProfile, isLoading: profileLoading } = api.candidate.currentProfile.useQuery(undefined, {
+	const { data: currentProfile, isLoading: profileLoading } = api.employer.currentProfile.useQuery(undefined, {
 		onSuccess: (data) => {
 			if (data) {
 				reset({
-					fullName: data.fullName,
-					jobTitle: data.jobTitle ?? "",
-					phone: data.phone ?? "",
-					email: data.email,
-					website: data.website ?? "",
-					experienceInYears: data.experienceInYears ?? "",
-					age: data.age ?? "",
-					skills: data.skills,
-					bio: data.bio ?? "",
-					showInListings: data.showInListings,
+					companyName: data.companyName ?? "",
+					companyPhone: data.companyPhone ?? "",
+					companyEmail: data.companyEmail ?? "",
+					companyWebsite: data.companyWebsite ?? "",
+					companyFoundedYear: data.companyFoundedYear ?? "",
+					companySize: data.companySize ?? "",
+					companyAddress: data.companyAddress ?? "",
+					companyDescription: data.companyDescription ?? "",
 				})
 			}
 		},
 	})
 
-	const { mutate: updateProfile, isLoading: updatingProfile } = api.candidate.updateProfile.useMutation({
+	const { mutate: updateProfile, isLoading: updatingProfile } = api.employer.updateProfile.useMutation({
 		onSuccess: () => {
 			toast({
 				title: "Profile Updated",
@@ -184,12 +171,12 @@ function ProfileForm() {
 				isClosable: true,
 			})
 
-			void apiContext.candidate.currentProfile.invalidate()
+			void apiContext.employer.currentProfile.invalidate()
 		},
 	})
 
 	const { mutate: updateProfileImage, isLoading: updateingProfileImage } =
-		api.candidate.updateProfileImage.useMutation({
+		api.employer.updateProfileImage.useMutation({
 			onSuccess: () => {
 				toast({
 					title: "Profile Image Updated",
@@ -198,11 +185,11 @@ function ProfileForm() {
 					isClosable: true,
 				})
 
-				void apiContext.candidate.currentProfile.invalidate()
+				void apiContext.employer.currentProfile.invalidate()
 			},
 		})
 
-	const onSubmit: SubmitHandler<CandidateProfileSchema> = (data) => {
+	const onSubmit: SubmitHandler<EmployerProfileSchema> = (data) => {
 		if (currentProfile) {
 			updateProfile({
 				id: currentProfile.id,
@@ -240,7 +227,7 @@ function ProfileForm() {
 						<Skeleton w={"180px"} h={"180px"} isLoaded={!updateingProfileImage}>
 							<Box w={"180px"} h={"180px"} borderRadius={12} overflow={"hidden"}>
 								<ImageWithFallback
-									src={currentProfile?.image ?? ""}
+									src={currentProfile?.companyImage ?? ""}
 									fallback="/placeholder-user-image.png"
 									alt=""
 									width={180}
@@ -280,61 +267,51 @@ function ProfileForm() {
 			<Grid templateColumns={{ lg: "repeat(2, 1fr)" }} gap={4} as="form" onSubmit={handleSubmit(onSubmit)}>
 				<GridItem>
 					<Skeleton isLoaded={!profileLoading}>
-						<FormControl id="fullName" isInvalid={!!errors.fullName}>
-							<FormLabel>Full Name</FormLabel>
-							<Input type="text" size="lg" {...register("fullName")} />
-							<FormErrorMessage>{errors.fullName && errors.fullName.message}</FormErrorMessage>
+						<FormControl id="companyName" isInvalid={!!errors.companyName}>
+							<FormLabel>Company Name</FormLabel>
+							<Input type="text" size="lg" {...register("companyName")} />
+							<FormErrorMessage>{errors.companyName && errors.companyName.message}</FormErrorMessage>
 						</FormControl>
 					</Skeleton>
 				</GridItem>
 
 				<GridItem>
 					<Skeleton isLoaded={!profileLoading}>
-						<FormControl id="jobTitle" isInvalid={!!errors.jobTitle}>
-							<FormLabel>Job Title</FormLabel>
-							<Input type="text" size="lg" {...register("jobTitle")} />
-							<FormErrorMessage>{errors.jobTitle && errors.jobTitle.message}</FormErrorMessage>
+						<FormControl id="companySize" isInvalid={!!errors.companySize}>
+							<FormLabel>Company Size</FormLabel>
+							<Input type="text" size="lg" {...register("companySize")} />
+							<FormErrorMessage>{errors.companySize && errors.companySize.message}</FormErrorMessage>
 						</FormControl>
 					</Skeleton>
 				</GridItem>
 
 				<GridItem>
 					<Skeleton isLoaded={!profileLoading}>
-						<FormControl id="phone" isInvalid={!!errors.phone}>
-							<FormLabel>Phone</FormLabel>
-							<Input type="text" size="lg" {...register("phone")} />
-							<FormErrorMessage>{errors.phone && errors.phone.message}</FormErrorMessage>
+						<FormControl id="companyPhone" isInvalid={!!errors.companyPhone}>
+							<FormLabel>Company Phone</FormLabel>
+							<Input type="text" size="lg" {...register("companyPhone")} />
+							<FormErrorMessage>{errors.companyPhone && errors.companyPhone.message}</FormErrorMessage>
 						</FormControl>
 					</Skeleton>
 				</GridItem>
 
 				<GridItem>
 					<Skeleton isLoaded={!profileLoading}>
-						<FormControl id="email" isInvalid={!!errors.email}>
-							<FormLabel>Email address</FormLabel>
-							<Input type="email" size="lg" {...register("email")} />
-							<FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
+						<FormControl id="companyEmail" isInvalid={!!errors.companyEmail}>
+							<FormLabel>Company Email</FormLabel>
+							<Input type="companyEmail" size="lg" {...register("companyEmail")} />
+							<FormErrorMessage>{errors.companyEmail && errors.companyEmail.message}</FormErrorMessage>
 						</FormControl>
 					</Skeleton>
 				</GridItem>
 
 				<GridItem>
 					<Skeleton isLoaded={!profileLoading}>
-						<FormControl id="website" isInvalid={!!errors.website}>
-							<FormLabel>Website</FormLabel>
-							<Input type="text" size="lg" {...register("website")} />
-							<FormErrorMessage>{errors.website && errors.website.message}</FormErrorMessage>
-						</FormControl>
-					</Skeleton>
-				</GridItem>
-
-				<GridItem>
-					<Skeleton isLoaded={!profileLoading}>
-						<FormControl id="experienceInYears" isInvalid={!!errors.experienceInYears}>
-							<FormLabel>Experience (In Years)</FormLabel>
-							<Input type="text" size="lg" {...register("experienceInYears")} />
+						<FormControl id="companyWebsite" isInvalid={!!errors.companyWebsite}>
+							<FormLabel>Company Website</FormLabel>
+							<Input type="text" size="lg" {...register("companyWebsite")} />
 							<FormErrorMessage>
-								{errors.experienceInYears && errors.experienceInYears.message}
+								{errors.companyWebsite && errors.companyWebsite.message}
 							</FormErrorMessage>
 						</FormControl>
 					</Skeleton>
@@ -342,62 +319,23 @@ function ProfileForm() {
 
 				<GridItem>
 					<Skeleton isLoaded={!profileLoading}>
-						<FormControl id="age" isInvalid={!!errors.age}>
-							<FormLabel>Age</FormLabel>
-							<Input type="text" size="lg" {...register("age")} />
-							<FormErrorMessage>{errors.age && errors.age.message}</FormErrorMessage>
+						<FormControl id="companyFoundedYear" isInvalid={!!errors.companyFoundedYear}>
+							<FormLabel>Company Founded Year</FormLabel>
+							<Input type="text" size="lg" {...register("companyFoundedYear")} />
+							<FormErrorMessage>
+								{errors.companyFoundedYear && errors.companyFoundedYear.message}
+							</FormErrorMessage>
 						</FormControl>
 					</Skeleton>
 				</GridItem>
 
 				<GridItem>
 					<Skeleton isLoaded={!profileLoading}>
-						<Controller
-							control={control}
-							name="skills"
-							render={({ field: { onChange, onBlur, value, name, ref } }) => (
-								<FormControl isInvalid={!!errors.skills} id="skills">
-									<FormLabel>Select your skills</FormLabel>
-									<CreatableSelect
-										size="lg"
-										isMulti
-										name={name}
-										ref={ref}
-										onChange={onChange}
-										onBlur={onBlur}
-										value={value}
-										options={[
-											{ value: "angular", label: "Angular" },
-											{ value: "react", label: "React" },
-										]}
-										placeholder="E.g. Angular, React..."
-										closeMenuOnSelect={false}
-									/>
-
-									<FormErrorMessage>{errors.skills && errors.skills.message}</FormErrorMessage>
-								</FormControl>
-							)}
-						/>
-					</Skeleton>
-				</GridItem>
-
-				<GridItem>
-					<Skeleton isLoaded={!profileLoading}>
-						<FormControl id="showInListings" isInvalid={!!errors.showInListings}>
-							<FormLabel>Allow In Search & Listing</FormLabel>
-							<RadioGroup
-								onChange={(value) => {
-									setShowInListings(() => value === "yes")
-								}}
-								value={showInListings ? "yes" : "no"}
-							>
-								<Stack direction="row">
-									<Radio value="yes">Yes</Radio>
-									<Radio value="no">No</Radio>
-								</Stack>
-							</RadioGroup>
+						<FormControl id="companyAddress" isInvalid={!!errors.companyAddress}>
+							<FormLabel>Company Address</FormLabel>
+							<Input type="text" size="lg" {...register("companyAddress")} />
 							<FormErrorMessage>
-								{errors.showInListings && errors.showInListings.message}
+								{errors.companyAddress && errors.companyAddress.message}
 							</FormErrorMessage>
 						</FormControl>
 					</Skeleton>
@@ -405,10 +343,12 @@ function ProfileForm() {
 
 				<GridItem colSpan={2}>
 					<Skeleton isLoaded={!profileLoading}>
-						<FormControl id="bio" isInvalid={!!errors.bio}>
-							<FormLabel>Bio</FormLabel>
-							<Textarea rows={6} {...register("bio")} />
-							<FormErrorMessage>{errors.bio && errors.bio.message}</FormErrorMessage>
+						<FormControl id="companyDescription" isInvalid={!!errors.companyDescription}>
+							<FormLabel>Company Description</FormLabel>
+							<Textarea rows={6} {...register("companyDescription")} />
+							<FormErrorMessage>
+								{errors.companyDescription && errors.companyDescription.message}
+							</FormErrorMessage>
 						</FormControl>
 					</Skeleton>
 				</GridItem>
@@ -438,13 +378,13 @@ function ContactForm() {
 		formState: { errors, isDirty },
 		handleSubmit,
 		reset,
-	} = useForm<CandidateContactSchema>({
-		resolver: zodResolver(candidateContactSchema),
+	} = useForm<EmployerContactSchema>({
+		resolver: zodResolver(employerContactSchema),
 	})
 
 	const apiContext = api.useContext()
 
-	const { data: currentProfile, isLoading: profileLoading } = api.candidate.currentProfile.useQuery(undefined, {
+	const { data: currentProfile, isLoading: profileLoading } = api.employer.currentProfile.useQuery(undefined, {
 		onSuccess: (data) => {
 			if (data) {
 				reset({
@@ -457,7 +397,7 @@ function ContactForm() {
 		},
 	})
 
-	const { mutate: updateContact, isLoading: updatingContact } = api.candidate.updateContactDetails.useMutation({
+	const { mutate: updateContact, isLoading: updatingContact } = api.employer.updateContactDetails.useMutation({
 		onSuccess: () => {
 			toast({
 				title: "Contact Updated",
@@ -466,11 +406,11 @@ function ContactForm() {
 				isClosable: true,
 			})
 
-			void apiContext.candidate.currentProfile.invalidate()
+			void apiContext.employer.currentProfile.invalidate()
 		},
 	})
 
-	const onSubmit: SubmitHandler<CandidateContactSchema> = (data) => {
+	const onSubmit: SubmitHandler<EmployerContactSchema> = (data) => {
 		if (currentProfile) {
 			updateContact({
 				id: currentProfile.id,

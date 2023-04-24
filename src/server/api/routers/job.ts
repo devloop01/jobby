@@ -1,8 +1,6 @@
-import { createTRPCRouter, protectedProcedure, employerProcedure } from "../trpc"
+import { createTRPCRouter, protectedProcedure, employerProcedure, publicProcedure } from "../trpc"
 import { z } from "zod"
 import { jobCreateSchema } from "@/utils/schema/job"
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime"
-import { TRPCClientError } from "@trpc/client"
 
 /**
  * User Routers
@@ -12,9 +10,19 @@ export const jobRouter = createTRPCRouter({
 	create: employerProcedure.input(jobCreateSchema).mutation(async ({ ctx, input }) => {
 		const employer = await ctx.prisma.employer.findUniqueOrThrow({
 			where: {
-				id: ctx.session.user.id,
+				userId: ctx.session.user.id,
 			},
 		})
+
+		const employerProfile = await ctx.prisma.employerProfile.findUniqueOrThrow({
+			where: {
+				employerId: employer.id,
+			},
+		})
+
+		const profileIsCompleted = employerProfile.isComplete
+
+		if (!profileIsCompleted) throw new Error("Employer profile is not complete!")
 
 		const newJob = await ctx.prisma.jobPosting.create({
 			data: {
@@ -35,12 +43,13 @@ export const jobRouter = createTRPCRouter({
 		return deletedJob
 	}),
 
-	find: protectedProcedure
+	findAll: publicProcedure
 		.input(
 			z
 				.object({
-					jobTitle: z.string().min(1).optional(),
+					jobTitle: z.string().optional(),
 					limit: z.number().positive().default(10).optional(),
+					sortBy: z.string().optional(),
 				})
 				.optional()
 		)
@@ -53,6 +62,10 @@ export const jobRouter = createTRPCRouter({
 							mode: "insensitive",
 						},
 					},
+					orderBy: {
+						createdAt: input?.sortBy === "latest" ? "desc" : undefined,
+						title: input?.sortBy === "latest" ? undefined : input?.sortBy === "asc" ? "asc" : "desc",
+					},
 					take: input?.limit,
 				})
 
@@ -62,13 +75,13 @@ export const jobRouter = createTRPCRouter({
 			}
 		}),
 
-	findById: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
+	findById: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
 		return ctx.prisma.jobPosting.findUnique({
 			where: { id: input },
 		})
 	}),
 
-	findByEmployerId: protectedProcedure
+	findByEmployerId: publicProcedure
 		.input(
 			z.object({
 				employerId: z.string(),
@@ -82,7 +95,7 @@ export const jobRouter = createTRPCRouter({
 			})
 		}),
 
-	likedByCandidate: protectedProcedure
+	likedByCandidate: publicProcedure
 		.input(z.object({ candidateId: z.string().optional() }))
 		.query(async ({ ctx, input }) => {
 			const job = await ctx.prisma.jobPosting.findMany({

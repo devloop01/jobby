@@ -2,9 +2,7 @@ import RootLayout from "@/layouts/root-layout"
 import {
 	Alert,
 	AlertTitle,
-	Box,
 	Button,
-	CloseButton,
 	Flex,
 	FormControl,
 	FormErrorMessage,
@@ -14,19 +12,6 @@ import {
 	Icon,
 	IconButton,
 	Input,
-	InputGroup,
-	InputRightElement,
-	List,
-	ListIcon,
-	ListItem,
-	Popover,
-	PopoverArrow,
-	PopoverBody,
-	PopoverContent,
-	PopoverTrigger,
-	Portal,
-	Progress,
-	Select,
 	Stack,
 	Textarea,
 	useBreakpointValue,
@@ -34,14 +19,14 @@ import {
 } from "@chakra-ui/react"
 import { type GetServerSidePropsContext } from "next"
 import Head from "next/head"
-import { useForm, useFieldArray, type SubmitHandler } from "react-hook-form"
+import { useForm, useFieldArray, type SubmitHandler, Controller } from "react-hook-form"
 
 import { jobCreateSchema, type JobCreateSchema } from "@/utils/schema/job"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { IconCircleCheckFilled, IconCircleXFilled, IconEye, IconEyeOff, IconPlus, IconX } from "@tabler/icons-react"
-import { useState } from "react"
+import { IconPlus, IconX } from "@tabler/icons-react"
 import { api } from "@/utils/api"
 import { isEmployer } from "@/utils"
+import { CreatableSelect } from "chakra-react-select"
 
 // eslint-disable-next-line @typescript-eslint/require-await
 export const getServerSideProps = isEmployer(async (context: GetServerSidePropsContext) => {
@@ -58,7 +43,7 @@ export default function CreateJob() {
 		control,
 		handleSubmit,
 		reset,
-		formState: { errors, isDirty },
+		formState: { errors },
 	} = useForm<JobCreateSchema>({
 		defaultValues: {
 			keyResponsibilities: [{ value: "" }],
@@ -144,6 +129,35 @@ export default function CreateJob() {
 							<Textarea bg="white" borderColor={"gray.300"} rows={6} {...register("description")} />
 							<FormErrorMessage>{errors.description && errors.description.message}</FormErrorMessage>
 						</FormControl>
+
+						<Controller
+							control={control}
+							name="categories"
+							render={({ field: { onChange, onBlur, value, name, ref } }) => (
+								<FormControl isInvalid={!!errors.categories} id="categories">
+									<FormLabel>Job Categories</FormLabel>
+									<CreatableSelect
+										variant="outline"
+										isMulti
+										name={name}
+										ref={ref}
+										onChange={onChange}
+										onBlur={onBlur}
+										value={value}
+										options={[
+											{ value: "Frontend", label: "Frontend" },
+											{ value: "Backend", label: "backend" },
+										]}
+										placeholder="E.g. frontend, backend..."
+										closeMenuOnSelect={false}
+									/>
+
+									<FormErrorMessage>
+										{errors.categories && errors.categories.message}
+									</FormErrorMessage>
+								</FormControl>
+							)}
+						/>
 
 						<FormControl id="keyResponsibilities" isInvalid={!!errors.keyResponsibilities}>
 							<FormLabel>Key Responsibilities</FormLabel>

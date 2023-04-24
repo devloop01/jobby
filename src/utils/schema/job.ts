@@ -16,6 +16,14 @@ export const jobCreateSchema = z.object({
 	hours: z.string().min(1).refine(validator.isNumeric, "Only Number Allowed"),
 	salary: z.string().min(1).refine(validator.isNumeric, "Only Number Allowed"),
 	expirationDate: z.string().min(1).refine(validator.isDate, "Invalid Date"),
+	categories: z
+		.array(
+			z.object({
+				label: z.string(),
+				value: z.string(),
+			})
+		)
+		.min(1),
 })
 
 export type JobCreateSchema = z.infer<typeof jobCreateSchema>
