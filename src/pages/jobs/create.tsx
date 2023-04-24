@@ -147,6 +147,8 @@ export default function CreateJob() {
 										options={[
 											{ value: "Frontend", label: "Frontend" },
 											{ value: "Backend", label: "backend" },
+											{ value: "Designer", label: "designer" },
+											{ value: "Teacher", label: "teacher" },
 										]}
 										placeholder="E.g. frontend, backend..."
 										closeMenuOnSelect={false}
@@ -241,7 +243,7 @@ export default function CreateJob() {
 							</FormControl>
 
 							<FormControl id="hours" isInvalid={!!errors.hours}>
-								<FormLabel>Required Hours</FormLabel>
+								<FormLabel>Required Hours (Per Week)</FormLabel>
 								<Input bg="white" borderColor={"gray.300"} {...register("hours")} />
 								<FormErrorMessage>{errors.hours && errors.hours.message}</FormErrorMessage>
 							</FormControl>
@@ -249,7 +251,7 @@ export default function CreateJob() {
 
 						<Stack direction={useBreakpointValue({ base: "column", sm: "row" })} align={"start"}>
 							<FormControl id="salary" isInvalid={!!errors.salary}>
-								<FormLabel>Salary</FormLabel>
+								<FormLabel>Salary (In Rs)</FormLabel>
 								<Input bg="white" borderColor={"gray.300"} {...register("salary")} />
 								<FormErrorMessage>{errors.salary && errors.salary.message}</FormErrorMessage>
 							</FormControl>

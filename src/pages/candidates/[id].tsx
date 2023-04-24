@@ -3,6 +3,7 @@ import JobCard from "@/components/job-card"
 import RootLayout from "@/layouts/root-layout"
 import { api } from "@/utils/api"
 import {
+	Badge,
 	Box,
 	Button,
 	Center,
@@ -29,22 +30,18 @@ import NextLink from "next/link"
 
 // eslint-disable-next-line @typescript-eslint/require-await
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-	const employerId = context.query.id as string
+	const candidateId = context.query.id as string
 
 	return {
-		props: { employerId },
+		props: { candidateId },
 	}
 }
 
-export default function JobDetails({ employerId }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-	const { data: employerProfile, isLoading: employerProfileLoading } =
-		api.employer.findProfileByEmployerId.useQuery(employerId)
-	const { data: jobs, isLoading: jobsLoading } = api.job.findByEmployerId.useQuery({
-		employerId,
-		limit: 3,
-	})
+export default function CandidateDetails({ candidateId }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+	const { data: candidateProfile, isLoading: candidateProfileLoading } =
+		api.candidate.findProfileByCandidateId.useQuery(candidateId)
 
-	if (!employerProfile || employerProfileLoading)
+	if (!candidateProfile || candidateProfileLoading)
 		return (
 			<Center h={"100vh"}>
 				<Spinner />
@@ -54,7 +51,7 @@ export default function JobDetails({ employerId }: InferGetServerSidePropsType<t
 	return (
 		<>
 			<Head>
-				<title>{`${employerProfile.companyName} | Jobby`}</title>
+				<title>{`${candidateProfile.fullName} - Profile | Jobby`}</title>
 			</Head>
 
 			<RootLayout>
@@ -62,13 +59,13 @@ export default function JobDetails({ employerId }: InferGetServerSidePropsType<t
 					<Box py={12} bgGradient={"linear(to-r, white, blue.100)"}>
 						<Center>
 							<Stack textAlign={"center"} align="center">
-								<Box w={200} h={200} borderRadius={"full"} overflow={"hidden"}>
+								<Box w={150} h={150} borderRadius={"full"} overflow={"hidden"}>
 									<ImageWithFallback
-										src={employerProfile.companyImage ?? ""}
+										src={candidateProfile.image ?? ""}
 										fallback="/placeholder-user-image.png"
 										height={120}
 										width={120}
-										alt={employerProfile.companyName}
+										alt={candidateProfile.fullName}
 										style={{
 											width: "100%",
 											height: "100%",
@@ -77,7 +74,7 @@ export default function JobDetails({ employerId }: InferGetServerSidePropsType<t
 									/>
 								</Box>
 								<Text fontSize={"3xl"} fontWeight={600}>
-									{employerProfile.companyName}
+									{candidateProfile.fullName}
 								</Text>
 							</Stack>
 						</Center>
@@ -95,28 +92,31 @@ export default function JobDetails({ employerId }: InferGetServerSidePropsType<t
 							>
 								<Stack px={4} spacing={4}>
 									<HStack justify={"space-between"}>
-										<Text fontWeight={600}>Company Size:</Text>
-										<Text color={"gray.600"}>{employerProfile.companySize}</Text>
-									</HStack>
-
-									<HStack justify={"space-between"}>
-										<Text fontWeight={600}>Founded In:</Text>
-										<Text color={"gray.600"}>{employerProfile.companyFoundedYear}</Text>
-									</HStack>
-
-									<HStack justify={"space-between"}>
-										<Text fontWeight={600}>Phone:</Text>
-										<Text color={"gray.600"}>{employerProfile.companyPhone}</Text>
+										<Text fontWeight={600}>Job Title:</Text>
+										<Text color={"gray.600"}>{candidateProfile.jobTitle}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
 										<Text fontWeight={600}>Email:</Text>
-										<Text color={"gray.600"}>{employerProfile.companyEmail}</Text>
+										<Text color={"gray.600"}>{candidateProfile.email}</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
-										<Text fontWeight={600}>Location:</Text>
-										<Text color={"gray.600"}>{employerProfile.companyAddress}</Text>
+										<Text fontWeight={600}>Phone:</Text>
+										<Text color={"gray.600"}>{candidateProfile.phone}</Text>
+									</HStack>
+
+									<HStack justify={"space-between"}>
+										<Text fontWeight={600}>Experience (In Years):</Text>
+										<Text color={"gray.600"}>{candidateProfile.experienceInYears}</Text>
+									</HStack>
+
+									<HStack justify={"space-between"}>
+										<Text fontWeight={600}>Address:</Text>
+										<Text color={"gray.600"}>
+											{candidateProfile.country}, {candidateProfile.state},{" "}
+											{candidateProfile.pincode}
+										</Text>
 									</HStack>
 
 									<HStack justify={"space-between"}>
@@ -141,49 +141,38 @@ export default function JobDetails({ employerId }: InferGetServerSidePropsType<t
 						</GridItem>
 
 						<GridItem colSpan={8}>
-							<Stack spacing={8}>
-								{employerProfile.companyDescription?.length !== 0 && (
-									<Stack>
-										<Heading as="h3" fontSize={"3xl"}>
-											About Company
-										</Heading>
+							<Stack spacing={6}>
+								<Stack>
+									<Heading as="h3" fontSize={"3xl"}>
+										Preffered Skills
+									</Heading>
+									<HStack>
+										{candidateProfile.skills.map((skill) => (
+											<Badge
+												fontSize={"lg"}
+												colorScheme="green"
+												px={3}
+												py={1}
+												borderRadius={"full"}
+												key={skill.value}
+											>
+												{skill.label}
+											</Badge>
+										))}
+									</HStack>
+								</Stack>
 
-										<Text color={"gray.700"}>{employerProfile.companyDescription}</Text>
-									</Stack>
-								)}
+								<Stack spacing={8}>
+									{candidateProfile.bio?.length !== 0 && (
+										<Stack>
+											<Heading as="h3" fontSize={"3xl"}>
+												About Me
+											</Heading>
 
-								{jobs && (
-									<Stack spacing={6}>
-										<Text fontSize={"2xl"} fontWeight={700}>
-											{jobs.length} other jobs available
-										</Text>
-
-										{jobsLoading && (
-											<Center h={"200px"}>
-												<Spinner />
-											</Center>
-										)}
-
-										<Stack spacing={6}>
-											{jobs.map((job) => (
-												<JobCard key={job.id} jobId={job.id} />
-											))}
-											<Flex>
-												<Button
-													variant={"outline"}
-													colorScheme="blue"
-													as={NextLink}
-													href={{
-														pathname: "/employers/[employerId]/jobs",
-														query: { employerId: employerProfile.employerId },
-													}}
-												>
-													Show more
-												</Button>
-											</Flex>
+											<Text color={"gray.700"}>{candidateProfile.bio}</Text>
 										</Stack>
-									</Stack>
-								)}
+									)}
+								</Stack>
 							</Stack>
 						</GridItem>
 					</Grid>

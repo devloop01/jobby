@@ -1,4 +1,5 @@
 import { IconGoogle } from "@/components/icons"
+import { ImageWithFallback } from "@/components/image-with-fallback"
 import RootLayout from "@/layouts/root-layout"
 import { api } from "@/utils/api"
 import {
@@ -151,8 +152,21 @@ export default function JobDetails({ jobId }: InferGetServerSidePropsType<typeof
 					<Stack spacing={6}>
 						<Box py={12} bgGradient={"linear(to-r, white, blue.100)"}>
 							<Center>
-								<Stack textAlign={"center"}>
-									<Image src={"/google.svg"} height={120} width={120} alt={"Company Avatar"} />
+								<Stack textAlign={"center"} align={"center"}>
+									<Box w={200} h={200} borderRadius={"full"} overflow={"hidden"}>
+										<ImageWithFallback
+											src={employerProfile.companyImage ?? ""}
+											fallback="/placeholder-user-image.png"
+											height={120}
+											width={120}
+											alt={employerProfile.companyName}
+											style={{
+												width: "100%",
+												height: "100%",
+												objectFit: "cover",
+											}}
+										/>
+									</Box>
 									<Text fontSize={"3xl"} fontWeight={600}>
 										{employerProfile.companyName}
 									</Text>
@@ -333,7 +347,20 @@ export default function JobDetails({ jobId }: InferGetServerSidePropsType<typeof
 								borderRadius={"lg"}
 							>
 								<HStack>
-									<IconGoogle w={16} h={16} />
+									<Box width={"60px"} height={"60px"} borderRadius={"full"} overflow={"hidden"}>
+										<ImageWithFallback
+											src={employerProfile.companyImage ?? ""}
+											fallback="/placeholder-user-image.png"
+											height={50}
+											width={50}
+											alt={employerProfile.companyName}
+											style={{
+												width: "100%",
+												height: "100%",
+												objectFit: "cover",
+											}}
+										/>
+									</Box>
 									<Box>
 										<Text fontWeight={700} fontSize={"xl"}>
 											Google

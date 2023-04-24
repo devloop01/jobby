@@ -1,17 +1,5 @@
 import { api } from "@/utils/api"
-import {
-	Heading,
-	Avatar,
-	Box,
-	Center,
-	Text,
-	Stack,
-	Button,
-	Link as ChakraLink,
-	Badge,
-	useColorModeValue,
-	Skeleton,
-} from "@chakra-ui/react"
+import { Heading, Box, Center, Text, Stack, Badge, Skeleton } from "@chakra-ui/react"
 import { ImageWithFallback } from "./image-with-fallback"
 import Link from "next/link"
 
@@ -56,7 +44,17 @@ export function CandidateCard({ candidateId }: CandidateCardProps) {
 						/>
 					</Box>
 				</Center>
-				<Heading fontSize={"2xl"} fontFamily={"body"}>
+				<Heading
+					fontSize={"2xl"}
+					fontFamily={"body"}
+					as={Link}
+					href={{
+						pathname: "/candidates/[candidateId]",
+						query: {
+							candidateId: candidate.id,
+						},
+					}}
+				>
 					{candidateProfile.fullName}
 				</Heading>
 				<Text fontSize={"sm"} textAlign={"center"} color={"gray.600"} px={3} noOfLines={2}>
