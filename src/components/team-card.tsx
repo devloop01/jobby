@@ -40,7 +40,7 @@ export function TeamCard({ member }: TeamCardProps) {
 			overflow={"hidden"}
 		>
 			<Box bg={"gray.300"} px={8}>
-				<Image h={"120px"} w={"full"} src={"/inspiria.webp"} objectFit={"contain"} alt={"Author"} />
+				<Image h={"120px"} w={"full"} src={"/siliguricollege.png"} objectFit={"contain"} alt={"Author"} />
 			</Box>
 			<Flex justify={"center"} mt={-12}>
 				<Avatar

@@ -7,7 +7,7 @@ import { type ReactNode } from "react"
 
 const TEAM_MEMBERS: TeamMember[] = [
 	{
-		name: "Pritam Mahanta",
+		name: "Sikriti Dakua",
 		role: "Frontend Developer",
 		image: "/team/pritam.jpg",
 		socials: [
@@ -19,9 +19,9 @@ const TEAM_MEMBERS: TeamMember[] = [
 	},
 
 	{
-		name: "Md Rehan",
+		name: "Bishal Karjee",
 		role: "Frontend Developer",
-		image: "/team/rehan.jpg",
+		image: "/team/bishal.jpg",
 		socials: [
 			{ label: "Linkedin", href: "/", icon: IconBrandLinkedin },
 			{ label: "Facebook", href: "/", icon: IconBrandFacebook },
@@ -31,9 +31,9 @@ const TEAM_MEMBERS: TeamMember[] = [
 	},
 
 	{
-		name: "Aman Kr Singh",
+		name: "Dipankar Roy",
 		role: "Frontend Developer",
-		image: "/team/aman.jpg",
+		image: "/team/dipankar.jpg",
 		socials: [
 			{ label: "Linkedin", href: "/", icon: IconBrandLinkedin },
 			{ label: "Facebook", href: "/", icon: IconBrandFacebook },
@@ -43,9 +43,9 @@ const TEAM_MEMBERS: TeamMember[] = [
 	},
 
 	{
-		name: "Rajshree Sha",
+		name: "Sumit Saha",
 		role: "Frontend Developer",
-		image: "/team/rajshree.jpg",
+		image: "/team/sumitsaha.jpg",
 		socials: [
 			{ label: "Linkedin", href: "/", icon: IconBrandLinkedin },
 			{ label: "Facebook", href: "/", icon: IconBrandFacebook },
@@ -55,21 +55,9 @@ const TEAM_MEMBERS: TeamMember[] = [
 	},
 
 	{
-		name: "Himanshu Khurana",
+		name: "Debajyoti Haldar",
 		role: "Frontend Developer",
-		image: "/team/himanshu.jpg",
-		socials: [
-			{ label: "Linkedin", href: "/", icon: IconBrandLinkedin },
-			{ label: "Facebook", href: "/", icon: IconBrandFacebook },
-			{ label: "Twitter", href: "/", icon: IconBrandTwitter },
-			{ label: "Instagram", href: "/", icon: IconBrandInstagram },
-		],
-	},
-
-	{
-		name: "Preeti Sharma",
-		role: "Frontend Developer",
-		image: "/team/preeti.jpg",
+		image: "/team/debajyoti.jpg",
 		socials: [
 			{ label: "Linkedin", href: "/", icon: IconBrandLinkedin },
 			{ label: "Facebook", href: "/", icon: IconBrandFacebook },
