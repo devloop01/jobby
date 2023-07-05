@@ -9,7 +9,7 @@ const TEAM_MEMBERS: TeamMember[] = [
 	{
 		name: "Sikriti Dakua",
 		role: "Frontend Developer",
-		image: "/team/pritam.jpg",
+		image: "/team/sikriti.png",
 		socials: [
 			{ label: "Linkedin", href: "/", icon: IconBrandLinkedin },
 			{ label: "Facebook", href: "/", icon: IconBrandFacebook },
