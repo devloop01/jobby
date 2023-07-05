@@ -7,57 +7,9 @@ import { type ReactNode } from "react"
 
 const TEAM_MEMBERS: TeamMember[] = [
 	{
-		name: "Sikriti Dakua",
+		name: "John Doe",
 		role: "Frontend Developer",
-		image: "/team/sikriti.png",
-		socials: [
-			{ label: "Linkedin", href: "/", icon: IconBrandLinkedin },
-			{ label: "Facebook", href: "/", icon: IconBrandFacebook },
-			{ label: "Twitter", href: "/", icon: IconBrandTwitter },
-			{ label: "Instagram", href: "/", icon: IconBrandInstagram },
-		],
-	},
-
-	{
-		name: "Bishal Karjee",
-		role: "Frontend Developer",
-		image: "/team/bishal.jpg",
-		socials: [
-			{ label: "Linkedin", href: "/", icon: IconBrandLinkedin },
-			{ label: "Facebook", href: "/", icon: IconBrandFacebook },
-			{ label: "Twitter", href: "/", icon: IconBrandTwitter },
-			{ label: "Instagram", href: "/", icon: IconBrandInstagram },
-		],
-	},
-
-	{
-		name: "Dipankar Roy",
-		role: "Frontend Developer",
-		image: "/team/dipankar.jpg",
-		socials: [
-			{ label: "Linkedin", href: "/", icon: IconBrandLinkedin },
-			{ label: "Facebook", href: "/", icon: IconBrandFacebook },
-			{ label: "Twitter", href: "/", icon: IconBrandTwitter },
-			{ label: "Instagram", href: "/", icon: IconBrandInstagram },
-		],
-	},
-
-	{
-		name: "Sumit Saha",
-		role: "Frontend Developer",
-		image: "/team/sumitsaha.jpg",
-		socials: [
-			{ label: "Linkedin", href: "/", icon: IconBrandLinkedin },
-			{ label: "Facebook", href: "/", icon: IconBrandFacebook },
-			{ label: "Twitter", href: "/", icon: IconBrandTwitter },
-			{ label: "Instagram", href: "/", icon: IconBrandInstagram },
-		],
-	},
-
-	{
-		name: "Debajyoti Haldar",
-		role: "Frontend Developer",
-		image: "/team/debajyoti.jpg",
+		image: "/imageurl.png",
 		socials: [
 			{ label: "Linkedin", href: "/", icon: IconBrandLinkedin },
 			{ label: "Facebook", href: "/", icon: IconBrandFacebook },
