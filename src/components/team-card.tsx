@@ -39,9 +39,7 @@ export function TeamCard({ member }: TeamCardProps) {
 			rounded={"md"}
 			overflow={"hidden"}
 		>
-			<Box bg={"gray.300"} px={8}>
-				<Image h={"120px"} w={"full"} src={"/siliguricollege.png"} objectFit={"contain"} alt={"Author"} />
-			</Box>
+			<Box bg={"gray.300"} px={8} h={"120px"} />
 			<Flex justify={"center"} mt={-12}>
 				<Avatar
 					size={"xl"}
